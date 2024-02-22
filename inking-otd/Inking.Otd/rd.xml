@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Directives xmlns="http://schemas.microsoft.com/netfx/2013/01/metadata">
+  <Application>
+    <Assembly Name="mscorlib">
+      <Type Name="System.Collections.Generic.List`1[System.Byte[]]" Dynamic="Required All" />
+    </Assembly>
+    <Assembly Name="OpenTabletDriver.Plugin">
+      <Type Name="OpenTabletDriver.Plugin.Tablet.TabletConfiguration" Dynamic="Required All" />
+      <Type Name="OpenTabletDriver.Plugin.Tablet.TabletSpecifications" Dynamic="Required All" />
+      <Type Name="OpenTabletDriver.Plugin.Tablet.DeviceIdentifier" Dynamic="Required All" />
+      <Type Name="OpenTabletDriver.Plugin.Tablet.DigitizerSpecifications" Dynamic="Required All" />
+      <Type Name="OpenTabletDriver.Plugin.Tablet.PenSpecifications" Dynamic="Required All" />
+      <Type Name="OpenTabletDriver.Plugin.Tablet.ButtonSpecifications" Dynamic="Required All" />
+    </Assembly>
+    <Assembly Name="OpenTabletDriver" Dynamic="Required All" />
+    <Assembly Name="OpenTabletDriver.Configurations" Dynamic="Required All" />
+  </Application>
+</Directives>

@@ -1,0 +1,6 @@
+/Inking.Otd/bin/
+/Inking.Otd/obj/
+/Inking.Otd/.vs/
+
+# Ignore native binaries
+/src/main/resources/natives/

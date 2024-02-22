@@ -1,0 +1,10 @@
+# Eclipse JDT (Eclipse IDE + VSCode)
+/**/.classpath
+
+# Eclipse IDE
+/.settings
+/*/.settings
+/**/.project
+
+# Maven
+/*/target
