@@ -12,8 +12,6 @@
 	<modules>
 		<module>inking-api</module>
 		<module>inking-otd</module>
-		<module>inking-windowsink</module>
-		<module>inking-sample-win64</module>
 		<module>inking-sample-otd</module>
 	</modules>
 	<dependencyManagement>
@@ -26,11 +24,6 @@
 			<dependency>
 				<groupId>io.github.nahkd123</groupId>
 				<artifactId>inking-otd</artifactId>
-				<version>0.0.1-SNAPSHOT</version>
-			</dependency>
-			<dependency>
-				<groupId>io.github.nahkd123</groupId>
-				<artifactId>inking-windowsink</artifactId>
 				<version>0.0.1-SNAPSHOT</version>
 			</dependency>
 			<dependency>
