@@ -36,12 +36,12 @@ public class TabletPoolingRateMain {
 		System.out.println("Ready!");
 
 		while (true) {
-			Thread.sleep(1000);
+			Thread.sleep(5000);
 
 			for (String key : counter.keySet()) {
-				long packetsPerSec = counter.get(key);
+				long packetsPer5Sec = counter.get(key);
 				counter.put(key, 0L);
-				System.out.println(key + ": Packets per second: " + packetsPerSec);
+				System.out.println(key + ": Pooling rate: " + (packetsPer5Sec / 5d) + "Hz");
 			}
 		}
 	}

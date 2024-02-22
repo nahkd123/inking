@@ -3,9 +3,6 @@ package io.github.nahkd123.inking.otd;
 import java.lang.foreign.Arena;
 import java.lang.foreign.Linker;
 import java.lang.foreign.SymbolLookup;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -18,6 +15,7 @@ import io.github.nahkd123.inking.api.TabletDriver;
 import io.github.nahkd123.inking.api.tablet.Tablet;
 import io.github.nahkd123.inking.api.util.Emitter;
 import io.github.nahkd123.inking.api.util.EmitterSource;
+import io.github.nahkd123.inking.internal.PlatformUtils;
 import io.github.nahkd123.inking.otd.netnative.OtdNative;
 import io.github.nahkd123.inking.otd.netnative.OtdTabletSpec;
 import io.github.nahkd123.inking.otd.tablet.OtdTablet;
@@ -103,25 +101,11 @@ public class OpenTabletDriver implements TabletDriver {
 	public Thread getDriverThread() { return driverThread; }
 
 	private static OtdNative findNative(Linker linker, Arena arena) {
-		ClassLoader clsLoader = OtdNative.class.getClassLoader();
-		String os = System.getProperty("os.name");
-		String osId = os.startsWith("Windows") ? "win"
-			: os.toLowerCase().equals("linux") ? "linux"
-			: os.startsWith("Mac OS X") ? "osx"
-			: "unknown";
-		String arch = System.getProperty("os.arch");
-		String archId = arch.equals("amd64") ? "x64" : arch;
-		String libExt = os.startsWith("Windows") ? "dll"
-			: os.toLowerCase().equals("linux") ? "so"
-			: os.startsWith("Mac OS X") ? "dylib"
-			: "so";
-		URL resUrl = clsLoader.getResource("natives/" + osId + "-" + archId + "/Inking.Otd." + libExt);
-		if (resUrl == null) return null;
-
 		try {
-			Path path = Path.of(resUrl.toURI());
-			return new OtdNative(linker, SymbolLookup.libraryLookup(path, arena), arena);
-		} catch (URISyntaxException e) {
+			ClassLoader clsLoader = OtdNative.class.getClassLoader();
+			SymbolLookup lib = PlatformUtils.lookupNative(clsLoader, "Inking.Otd", linker, arena);
+			return new OtdNative(linker, lib, arena);
+		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
