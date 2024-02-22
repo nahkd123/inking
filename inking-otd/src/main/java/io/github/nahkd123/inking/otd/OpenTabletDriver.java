@@ -129,6 +129,15 @@ public class OpenTabletDriver implements TabletDriver {
 
 	private static OpenTabletDriver driver;
 
+	/**
+	 * <p>
+	 * Get the driver. This method will handles the native libraries loading and it
+	 * will do nothing if the native library doesn't exists (a.k.a the platform is
+	 * not supported).
+	 * </p>
+	 * 
+	 * @return The driver.
+	 */
 	public static OpenTabletDriver getDriver() {
 		if (driver != null) return driver;
 		driver = new OpenTabletDriver(findNative(Linker.nativeLinker(), Arena.ofAuto()));

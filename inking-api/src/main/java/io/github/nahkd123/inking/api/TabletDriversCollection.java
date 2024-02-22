@@ -13,7 +13,8 @@ import io.github.nahkd123.inking.api.util.EmitterSource;
 /**
  * <p>
  * A collection of tablet drivers, which can be used just like regular
- * {@link TabletDriver}.
+ * {@link TabletDriver}. Mainly used for combining multiple drivers into a
+ * single collection.
  * </p>
  */
 public class TabletDriversCollection implements TabletDriver {
@@ -32,7 +33,7 @@ public class TabletDriversCollection implements TabletDriver {
 	}
 
 	@Override
-	public String getDriverName() { return "DriversCollection"; }
+	public String getDriverName() { return "Drivers Collection"; }
 
 	public Set<TabletDriver> getAllDrivers() { return Collections.unmodifiableSet(drivers); }
 

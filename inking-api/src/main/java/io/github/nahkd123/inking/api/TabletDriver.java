@@ -5,6 +5,19 @@ import java.util.Collection;
 import io.github.nahkd123.inking.api.tablet.Tablet;
 import io.github.nahkd123.inking.api.util.Emitter;
 
+/**
+ * <p>
+ * An interface for all tablet drivers. You can get all connected tablets, or
+ * listen for when a new tablet is discovered, a tablet connected to or
+ * disconnected from driver. To listen for tablet inputs, use
+ * {@link Tablet#getPacketsEmitter()}.
+ * </p>
+ * 
+ * @see #getTabletDiscoverEmitter()
+ * @see #getTabletConnectEmitter()
+ * @see #getTabletDisconnectEmitter()
+ * @see Tablet
+ */
 public interface TabletDriver {
 	/**
 	 * <p>
@@ -22,6 +35,8 @@ public interface TabletDriver {
 	 * </p>
 	 * 
 	 * @return Emitter.
+	 * @see #getTabletDisconnectEmitter()
+	 * @see #getTabletDiscoverEmitter()
 	 */
 	public Emitter<Tablet> getTabletConnectEmitter();
 
@@ -31,12 +46,19 @@ public interface TabletDriver {
 	 * </p>
 	 * 
 	 * @return Emitter.
+	 * @see #getTabletDisconnectEmitter()
 	 */
 	public Emitter<Tablet> getTabletDisconnectEmitter();
 
 	/**
 	 * <p>
-	 * Get the emitter that emits when a new tablet is discovered by this driver.
+	 * Get the emitter that emits when a new tablet is discovered by this driver. A
+	 * tablet is considered to be discovered when it's unique identifier hasn't been
+	 * seen before by the driver. Even if the tablet is disconnected, the tablet
+	 * emitted from this emitter can still be used.
+	 * </p>
+	 * <p>
+	 * This will only emits when an undiscovered tablet connected to the computer.
 	 * </p>
 	 * 
 	 * @return Emitter.

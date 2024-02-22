@@ -19,8 +19,24 @@ public interface Tablet {
 	 */
 	public String getTabletId();
 
+	/**
+	 * <p>
+	 * Get the connect state of this tablet. Note that the tablet object will still
+	 * be available in the memory when the device is disconnected.
+	 * </p>
+	 * 
+	 * @return Connect state.
+	 */
 	public boolean isConnected();
 
+	/**
+	 * <p>
+	 * Get the tablet specifications. This includes the tablet's display name, its
+	 * physical size and the packet input size.
+	 * </p>
+	 * 
+	 * @return The tablet specificatons.
+	 */
 	public TabletSpec getSpec();
 
 	/**
