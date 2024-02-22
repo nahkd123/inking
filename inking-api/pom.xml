@@ -8,4 +8,5 @@
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 	<artifactId>inking-api</artifactId>
+	<name>Inking API</name>
 </project>
