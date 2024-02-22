@@ -107,7 +107,7 @@ public class OpenTabletDriver implements TabletDriver {
 		String os = System.getProperty("os.name");
 		String osId = os.startsWith("Windows") ? "win"
 			: os.toLowerCase().equals("linux") ? "linux"
-			: os.startsWith("Mac OS X") ? "macos"
+			: os.startsWith("Mac OS X") ? "osx"
 			: "unknown";
 		String arch = System.getProperty("os.arch");
 		String archId = arch.equals("amd64") ? "x64" : arch;
