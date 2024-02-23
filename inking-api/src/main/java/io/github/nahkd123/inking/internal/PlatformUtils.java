@@ -1,11 +1,5 @@
 package io.github.nahkd123.inking.internal;
 
-import java.io.IOException;
-import java.lang.foreign.Arena;
-import java.lang.foreign.Linker;
-import java.lang.foreign.SymbolLookup;
-import java.net.URISyntaxException;
-
 public class PlatformUtils {
 	public static String getPlatformId() {
 		String name = System.getProperty("os.name");
@@ -28,13 +22,5 @@ public class PlatformUtils {
 		case "osx" -> "dylib";
 		case null, default -> "so";
 		};
-	}
-
-	public static SymbolLookup lookupNative(ClassLoader clsLoader, String libName, Linker linker, Arena arena) throws IOException, URISyntaxException {
-		Holder<SymbolLookup> lib = new Holder<>(null);
-		ResourcesUtils.consumeResource(clsLoader.getResource("natives/"
-			+ getPlatformId() + "-" + getArchId() + "/"
-			+ libName + "." + getLibraryExt()).toURI(), path -> lib.obj = SymbolLookup.libraryLookup(path, arena));
-		return lib.obj;
 	}
 }

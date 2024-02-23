@@ -1,5 +1,9 @@
 package io.github.nahkd123.inking.otd.sample;
 
+import java.lang.foreign.Arena;
+import java.lang.foreign.Linker;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -7,6 +11,7 @@ import io.github.nahkd123.inking.api.TabletDriver;
 import io.github.nahkd123.inking.api.tablet.TabletSpec;
 import io.github.nahkd123.inking.api.util.Vector2;
 import io.github.nahkd123.inking.otd.OpenTabletDriver;
+import io.github.nahkd123.inking.otd.netnative.OtdNative;
 
 /**
  * <p>
@@ -17,7 +22,10 @@ import io.github.nahkd123.inking.otd.OpenTabletDriver;
  */
 public class TabletPoolingRateMain {
 	public static void main(String[] args) throws Throwable {
-		TabletDriver driver = OpenTabletDriver.getDriver();
+		Path nativeLibPath = Files.createTempDirectory("inking-sample-otd");
+		Linker linker = Linker.nativeLinker();
+		Arena arena = Arena.ofAuto();
+		TabletDriver driver = new OpenTabletDriver(OtdNative.findNative(nativeLibPath, linker, arena));
 		Map<String, Long> counter = new HashMap<>();
 
 		driver.getTabletDiscoverEmitter().listen(tablet -> {
