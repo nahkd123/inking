@@ -50,6 +50,16 @@ public interface Packet {
 
 	/**
 	 * <p>
+	 * Get the nanoseconds timestamp value for this packet. The timestamp should be
+	 * obtained from input thread of the tablet/driver.
+	 * </p>
+	 * 
+	 * @return The timestamp.
+	 */
+	public long getTimestamp();
+
+	/**
+	 * <p>
 	 * Check if the nib is the eraser. Returns {@code false} if the tablet does not
 	 * support erasers or the pen is not near the tablet.
 	 * </p>

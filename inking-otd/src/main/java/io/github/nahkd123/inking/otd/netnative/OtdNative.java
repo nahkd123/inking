@@ -104,7 +104,7 @@ public class OtdNative {
 			MethodHandle packetFuncHandle = MethodHandles.lookup().bind(
 				(PacketCallbackBridge) (serialStr, packetMemory) -> {
 					String serial = serialStr.getUtf8String(0L);
-					OtdPacket packet = new OtdPacket(packetMemory);
+					OtdPacket packet = new OtdPacket(packetMemory, System.nanoTime());
 					packetCallback.accept(serial, packet);
 				}, "onPacket", MethodType.methodType(Void.TYPE, MemorySegment.class, MemorySegment.class));
 

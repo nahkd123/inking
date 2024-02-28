@@ -10,6 +10,7 @@ import io.github.nahkd123.inking.api.util.Vector2;
  * </p>
  */
 public class SimplePacket implements Packet {
+	private long timestamp;
 	private boolean penDown;
 	private boolean eraser;
 	private Vector2 position;
@@ -19,7 +20,8 @@ public class SimplePacket implements Packet {
 	private boolean[] penButtons;
 	private boolean[] auxButtons;
 
-	public SimplePacket(boolean penDown, boolean eraser, Vector2 position, Vector2 tilt, int rawPressure, int rawHoveringDistance, boolean[] penButtons, boolean[] auxButtons) {
+	public SimplePacket(long timestamp, boolean penDown, boolean eraser, Vector2 position, Vector2 tilt, int rawPressure, int rawHoveringDistance, boolean[] penButtons, boolean[] auxButtons) {
+		this.timestamp = timestamp;
 		this.penDown = penDown;
 		this.eraser = eraser;
 		this.position = position;
@@ -29,6 +31,9 @@ public class SimplePacket implements Packet {
 		this.penButtons = penButtons;
 		this.auxButtons = auxButtons;
 	}
+
+	@Override
+	public long getTimestamp() { return timestamp; }
 
 	@Override
 	public Vector2 getPenPosition() { return position; }

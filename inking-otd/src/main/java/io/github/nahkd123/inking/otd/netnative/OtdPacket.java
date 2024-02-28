@@ -11,6 +11,7 @@ import io.github.nahkd123.inking.api.util.Vector2;
 
 public class OtdPacket implements Packet {
 	private static final long FLAG_ERASER = 0b00000001L;
+	private long timestamp;
 	private long flags;
 	private Vector2 position;
 	private Vector2 tilt;
@@ -27,7 +28,7 @@ public class OtdPacket implements Packet {
 	 * 
 	 * @param memory The memory segment.
 	 */
-	public OtdPacket(MemorySegment memory) {
+	public OtdPacket(MemorySegment memory, long timestamp) {
 		flags = memory.get(ValueLayout.JAVA_LONG, 0L);
 		position = new ConstantVector2(memory.get(ValueLayout.JAVA_FLOAT, 8L), memory.get(ValueLayout.JAVA_FLOAT, 12L));
 		tilt = new ConstantVector2(memory.get(ValueLayout.JAVA_FLOAT, 16L), memory.get(ValueLayout.JAVA_FLOAT, 20L));
@@ -35,7 +36,11 @@ public class OtdPacket implements Packet {
 		hoverDistance = memory.get(ValueLayout.JAVA_INT, 28L);
 		penButtons = memory.get(ValueLayout.JAVA_INT, 32L);
 		auxButtons = memory.get(ValueLayout.JAVA_INT, 40L);
+		this.timestamp = timestamp;
 	}
+
+	@Override
+	public long getTimestamp() { return timestamp; }
 
 	@Override
 	public Vector2 getPenPosition() { return position; }
