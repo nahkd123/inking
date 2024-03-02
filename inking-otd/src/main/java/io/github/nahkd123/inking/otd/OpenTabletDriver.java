@@ -2,11 +2,10 @@ package io.github.nahkd123.inking.otd;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import io.github.nahkd123.inking.api.TabletDriver;
 import io.github.nahkd123.inking.api.tablet.Tablet;
@@ -21,9 +20,9 @@ public class OpenTabletDriver implements TabletDriver {
 	private EmitterSource<Tablet> disconnectEmitter = new EmitterSource<>();
 	private EmitterSource<Tablet> discoverEmitter = new EmitterSource<>();
 
-	private Map<String, OtdTablet> knownTablets = new HashMap<>();
-	private Set<String> undiscoveredSerials = new HashSet<>();
-	private Set<Tablet> connected = new HashSet<>();
+	private Map<String, OtdTablet> knownTablets = new ConcurrentHashMap<>();
+	private Set<String> undiscoveredSerials = ConcurrentHashMap.newKeySet();
+	private Set<Tablet> connected = ConcurrentHashMap.newKeySet();
 	private OtdNative nativeAccess;
 	private Thread driverThread;
 
@@ -40,6 +39,9 @@ public class OpenTabletDriver implements TabletDriver {
 							tablet.connected = connected;
 							(connected ? connectEmitter : disconnectEmitter).push(tablet);
 							tablet.stateChanges.push(tablet);
+
+							if (connected) this.connected.add(tablet);
+							else this.connected.remove(tablet);
 						} else if (connected && !undiscoveredSerials.contains(serial))
 							undiscoveredSerials.add(serial);
 					}, (serial, packet) -> {
@@ -59,6 +61,7 @@ public class OpenTabletDriver implements TabletDriver {
 								OtdTablet tablet = new OtdTablet(this, serial, info);
 								knownTablets.put(serial, tablet);
 								tablet.connected = true;
+								connected.add(tablet);
 								discoverEmitter.push(tablet);
 								connectEmitter.push(tablet);
 							}
