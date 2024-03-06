@@ -34,7 +34,7 @@ public class TabletPollingRateMain {
 
 		driver.getTabletDiscoverEmitter().listen(tablet -> {
 			TabletSpec spec = tablet.getSpec();
-			Vector2 physicalSize = spec.getPhysicalSize();
+			Vector2 physicalSize = spec.getPhysicalSize().get();
 
 			System.out.println("New tablet discovered: " + tablet.getTabletId());
 			System.out.println("  Name:          " + spec.getTabletName());

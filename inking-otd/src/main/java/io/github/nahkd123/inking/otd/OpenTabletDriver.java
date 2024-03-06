@@ -7,15 +7,21 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import io.github.nahkd123.inking.api.TabletDriver;
 import io.github.nahkd123.inking.api.tablet.Tablet;
 import io.github.nahkd123.inking.api.util.Emitter;
 import io.github.nahkd123.inking.api.util.EmitterSource;
+import io.github.nahkd123.inking.internal.Platform;
+import io.github.nahkd123.inking.internal.PlatformArch;
 import io.github.nahkd123.inking.otd.netnative.OtdNative;
 import io.github.nahkd123.inking.otd.netnative.OtdTabletSpec;
 import io.github.nahkd123.inking.otd.tablet.OtdTablet;
 
 public class OpenTabletDriver implements TabletDriver {
+	private static final Logger LOGGER = LoggerFactory.getLogger("Inking/OpenTabletDriver");
 	private EmitterSource<Tablet> connectEmitter = new EmitterSource<>();
 	private EmitterSource<Tablet> disconnectEmitter = new EmitterSource<>();
 	private EmitterSource<Tablet> discoverEmitter = new EmitterSource<>();
@@ -70,13 +76,23 @@ public class OpenTabletDriver implements TabletDriver {
 						Thread.sleep(1);
 					}
 				} catch (Exception e) {
-					// TODO log error using slf4j
-					e.printStackTrace();
+					LOGGER.error("Error occured from driver thread: {}", e);
+					LOGGER.error("OpenTabletDriver Inking driver will stops.");
+					knownTablets.values().forEach(tablet -> {
+						if (tablet.isConnected()) {
+							tablet.connected = false;
+							disconnectEmitter.push(tablet);
+							tablet.stateChanges.push(tablet);
+							connected.remove(tablet);
+						}
+					});
 				}
 			});
 			driverThread.setName("Inking/OpenTabletDriver");
 		} else {
-			// TODO log warning that native does not exists
+			LOGGER.warn("Couldn't find natives for {} (architecture is {}). Inking OpenTabletDriver bridge will "
+				+ "do nothing.",
+				Platform.getCurrent(), PlatformArch.getCurrent());
 		}
 	}
 

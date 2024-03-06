@@ -37,6 +37,17 @@
 				<artifactId>jna-platform</artifactId>
 				<version>5.13.0</version>
 			</dependency>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-api</artifactId>
+				<version>2.0.9</version>
+			</dependency>
+			<dependency>
+				<!-- Mainly for testing -->
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-simple</artifactId>
+				<version>2.0.9</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 	<build>

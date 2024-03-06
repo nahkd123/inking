@@ -14,5 +14,9 @@
 			<groupId>io.github.nahkd123</groupId>
 			<artifactId>inking-otd</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-simple</artifactId>
+		</dependency>
 	</dependencies>
 </project>
