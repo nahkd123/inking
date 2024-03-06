@@ -6,7 +6,6 @@ import io.github.nahkd123.inking.api.tablet.Tablet;
 import io.github.nahkd123.inking.api.tablet.TabletSpec;
 import io.github.nahkd123.inking.api.util.Emitter;
 import io.github.nahkd123.inking.api.util.EmitterSource;
-import io.github.nahkd123.inking.api.util.Vector2;
 import io.github.nahkd123.inking.otd.OpenTabletDriver;
 
 public class OtdTablet implements Tablet {
@@ -35,9 +34,6 @@ public class OtdTablet implements Tablet {
 
 	@Override
 	public TabletSpec getSpec() { return spec; }
-
-	@Override
-	public Vector2 getInputRectangle() { return spec.getInputSize(); }
 
 	@Override
 	public Emitter<Tablet> getStateChangesEmitter() { return stateChanges; }

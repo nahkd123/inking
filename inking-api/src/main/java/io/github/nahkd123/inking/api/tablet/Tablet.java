@@ -2,7 +2,6 @@ package io.github.nahkd123.inking.api.tablet;
 
 import io.github.nahkd123.inking.api.TabletDriver;
 import io.github.nahkd123.inking.api.util.Emitter;
-import io.github.nahkd123.inking.api.util.Vector2;
 
 public interface Tablet {
 	public TabletDriver getDriver();
@@ -38,27 +37,6 @@ public interface Tablet {
 	 * @return The tablet specificatons.
 	 */
 	public TabletSpec getSpec();
-
-	/**
-	 * <p>
-	 * Get the input rectangle size. The value from {@link Packet#getPenPosition()}
-	 * will always be within the bounds of input rectangle while the pen is
-	 * hovering.
-	 * </p>
-	 * <p>
-	 * <b>Windows Ink</b>: The size of the input rectangle is the size of the
-	 * current window that the driver is bounds to. The measurement unit for each
-	 * dimension is pixels.
-	 * </p>
-	 * <p>
-	 * <b>OpenTabletDriver</b>: OTD reports entire tablet input rectangle. The unit
-	 * is depends on which tablet you are using. Wacom tablets for example reports
-	 * the physical size of the tablet, multiplied by {@code 10}.
-	 * </p>
-	 * 
-	 * @return The input rectangle.
-	 */
-	public Vector2 getInputRectangle();
 
 	/**
 	 * <p>

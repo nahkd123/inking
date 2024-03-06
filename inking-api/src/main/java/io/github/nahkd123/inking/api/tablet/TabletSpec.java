@@ -1,5 +1,7 @@
 package io.github.nahkd123.inking.api.tablet;
 
+import java.util.Optional;
+
 import io.github.nahkd123.inking.api.util.Vector2;
 
 /**
@@ -10,13 +12,15 @@ import io.github.nahkd123.inking.api.util.Vector2;
 public interface TabletSpec {
 	/**
 	 * <p>
-	 * Get the display name of this tablet, like "Wacom CTC-6110WL" or "Windows Ink
-	 * Window" for example.
+	 * Get the display name of this tablet, like "Wacom CTC-6110WL" or "Windows Ink"
+	 * for example.
 	 * </p>
 	 * 
 	 * @return The display name of tablet.
 	 */
 	public String getTabletName();
+
+	public TabletType getTabletType();
 
 	/**
 	 * <p>
@@ -35,33 +39,27 @@ public interface TabletSpec {
 
 	/**
 	 * <p>
-	 * Get the physical size of this tablet. The width of the tablet is
-	 * {@link Vector2#x()} and the height is {@link Vector2#y()}. Both width and
-	 * height are measured in millimeters.
-	 * </p>
-	 * <p>
-	 * Please note that the physical size in here implies the physical input area,
-	 * not the size of entire tablet. For Windows Ink, the physical size is the
-	 * physical size of primary monitor (because I don't know how to handle this!).
+	 * Get the physical size of this tablet. If {@link #getTabletType()} returns
+	 * {@link TabletType#WINDOW_BOUND}, this will always return
+	 * {@link Optional#empty()}.
 	 * </p>
 	 * 
-	 * @return The physical input size.
+	 * @return The physical size of this tablet.
 	 */
-	public Vector2 getPhysicalSize();
+	public Optional<Vector2> getPhysicalSize();
 
 	/**
 	 * <p>
-	 * Get the input size of this tablet. Position values reported from
-	 * {@link Packet#getPenPosition()} are always inside this input size. Windows
-	 * Ink driver may restrict the position to be inside
-	 * {@link Tablet#getInputRectangle()}.
+	 * Get the maximum input value of this tablet. The underlying application should
+	 * never map inputs if {@link #getTabletType()} returns
+	 * {@link TabletType#WINDOW_BOUND}.
 	 * </p>
 	 * <p>
-	 * For Windows Ink, the size is the size of primary monitor. You should use
-	 * {@link Tablet#getInputRectangle()} to check the maximum values.
+	 * Values from {@link Packet#getPenPosition()} will always be within the limit
+	 * defined from returned value of this method.
 	 * </p>
 	 * 
-	 * @return The packet input size.
+	 * @return The input size of this tablet.
 	 */
 	public Vector2 getInputSize();
 
