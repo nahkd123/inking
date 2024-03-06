@@ -1,7 +1,5 @@
 package io.github.nahkd123.inking.otd.netnative;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.lang.foreign.AddressLayout;
 import java.lang.foreign.Arena;
 import java.lang.foreign.FunctionDescriptor;
@@ -13,7 +11,6 @@ import java.lang.foreign.ValueLayout;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.function.BiConsumer;
 
@@ -59,29 +56,8 @@ public class OtdNative {
 	 */
 	public static OtdNative findNative(Path copyDest, Linker linker, Arena arena) {
 		ClassLoader clsLoader = OtdNative.class.getClassLoader();
-		String resPath = "natives/"
-			+ PlatformUtils.getPlatformId() + "-" + PlatformUtils.getArchId() + "/"
-			+ "Inking.Otd" + "." + PlatformUtils.getLibraryExt();
-		Path libPath = copyDest.resolve(resPath);
-
-		if (!Files.exists(libPath)) {
-			if (!Files.exists(libPath.resolve(".."))) try {
-				Files.createDirectories(libPath.resolve(".."));
-			} catch (IOException e) {
-				e.printStackTrace();
-				return null;
-			}
-
-			try (InputStream res = clsLoader.getResourceAsStream(resPath)) {
-				if (res == null) return null;
-				Files.copy(res, libPath);
-			} catch (Exception e) {
-				e.printStackTrace();
-				return null;
-			}
-		}
-
-		return new OtdNative(linker, SymbolLookup.libraryLookup(libPath, arena), arena);
+		SymbolLookup lib = PlatformUtils.loadLibrary("Inking.Otd", clsLoader, copyDest, arena);
+		return new OtdNative(linker, lib, arena);
 	}
 
 	protected static AddressLayout stringLayout() {
