@@ -1,6 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using OpenTabletDriver;
 using OpenTabletDriver.Plugin.Tablet;
+using System.Diagnostics;
+using System.Numerics;
 using System.Runtime.InteropServices;
 
 namespace Inking.Otd
@@ -23,7 +25,7 @@ namespace Inking.Otd
         [UnmanagedCallersOnly(EntryPoint = "initialize_driver")]
         public static bool InitializeDriver(
             delegate*<nint, bool, void> connectStateCallback,
-            delegate*<nint, InkingPacket, void> packetCallback
+            delegate*<nint, Packet, void> packetCallback
         )
         {
             if (InitializationState) return false;
@@ -34,8 +36,8 @@ namespace Inking.Otd
                 var provider = collection.BuildServiceProvider();
                 driver = provider.GetRequiredService<Driver>();
 
-                driver.CompositeDeviceHub.DevicesChanged += (_, _) => internalDevicesChanged(connectStateCallback, packetCallback);
-                internalDetectDevices(connectStateCallback, packetCallback);
+                driver.CompositeDeviceHub.DevicesChanged += (_, _) => InternalDevicesChanged(connectStateCallback, packetCallback);
+                InternalDetectDevices(connectStateCallback, packetCallback);
 
                 InitializationState = true;
             } catch (Exception ex)
@@ -47,18 +49,19 @@ namespace Inking.Otd
             return true;
         }
 
-        private static void internalDevicesChanged(
+        private static void InternalDevicesChanged(
             delegate*<nint, bool, void> connectStateCallback,
-            delegate*<nint, InkingPacket, void> packetCallback
+            delegate*<nint, Packet, void> packetCallback
         )
         {
+            // TODO kill 50ms delay
             Task.Delay(50).Wait();
-            internalDetectDevices(connectStateCallback, packetCallback);
+            InternalDetectDevices(connectStateCallback, packetCallback);
         }
 
-        private static void internalDetectDevices(
+        private static void InternalDetectDevices(
             delegate*<nint, bool, void> connectStateCallback,
-            delegate*<nint, InkingPacket, void> packetCallback
+            delegate*<nint, Packet, void> packetCallback
         )
         {
             if (driver == null) return;
@@ -74,34 +77,8 @@ namespace Inking.Otd
                     {
                         void ReportsHandler(object? sender, IDeviceReport report)
                         {
-                            IAbsolutePositionReport? pos = report is IAbsolutePositionReport a ? a : null;
-                            ITabletReport? tab = report is ITabletReport b ? b : null;
-                            IAuxReport? aux = report is IAuxReport c ? c : null;
-                            ITiltReport? tilt = report is ITiltReport d ? d : null;
-                            IProximityReport? hover = report is IProximityReport e ? e : null;
-                            IEraserReport? eraser = report is IEraserReport f ? f : null;
-
-                            bool shouldSend = pos != null || tab != null || aux != null || tilt != null || hover != null || eraser != null;
-                            if (!shouldSend) return;
-
-                            uint pressure = tab != null ? tab.Pressure : 0u;
-                            ulong penButtons = tab != null ? boolArrayToFlags(tab.PenButtons) : 0ul;
-                            ulong auxButtons = aux != null ? boolArrayToFlags(aux.AuxButtons) : 0ul;
-                            ulong flags =
-                                (eraser != null && eraser.Eraser? 0b00000001ul : 0ul);
-
-                            InkingPacket packet = new()
-                            {
-                                Flags = flags,
-                                Position = pos != null ? pos.Position : new System.Numerics.Vector2(0, 0),
-                                Tilt = tilt != null ? tilt.Tilt : new System.Numerics.Vector2(0, 0),
-                                Pressure = pressure,
-                                HoverDistance = hover != null ? hover.HoverDistance : (pressure == 0u ? 1u : 0u),
-                                PenButtons = penButtons,
-                                AuxButtons = auxButtons,
-                            };
-
-                            packetCallback(convertString(serial), packet);
+                            if (report is DeviceReport) return;
+                            packetCallback(convertString(serial), PacketFromReport(report));
                         }
 
                         void ConnectionHandler(object? sender, bool connected)
@@ -123,7 +100,47 @@ namespace Inking.Otd
             }
         }
 
-        private static ulong boolArrayToFlags(bool[] bools)
+        private static Packet PacketFromReport(IDeviceReport report)
+        {
+            uint pressure = 0;
+            ulong penButtons = 0ul;
+            ulong auxButtons = 0ul;
+
+            if (report is ITabletReport tab)
+            {
+                pressure = tab.Pressure;
+                penButtons = BoolArrayToFlags(tab.PenButtons);
+            }
+
+            if (report is IAuxReport aux)
+            {
+                auxButtons = BoolArrayToFlags(aux.AuxButtons);
+            }
+
+            PenState flags =
+                (pressure > 0 ? PenState.PenDown : PenState.None) |
+                (report is IEraserReport eraser && eraser.Eraser ? PenState.Eraser : PenState.None);
+
+            Packet packet = new()
+            {
+                States = flags,
+                Position = report is IAbsolutePositionReport pos ? pos.Position : new Vector2(0, 0),
+                Tilt = report is ITiltReport tilt ? tilt.Tilt : new Vector2(0, 0),
+                Pressure = pressure,
+                HoverDistance = report is IProximityReport proximity
+                    ? proximity.HoverDistance
+                    : pressure > 0 ? 0u : 1u,
+                PenButtons = penButtons,
+                AuxButtons = auxButtons,
+                Timestamp = GetNanoTime()
+            };
+            return packet;
+        }
+
+        // Mirrors System.nanoTime() from Java
+        private static ulong GetNanoTime() => 10000ul * (ulong)Stopwatch.GetTimestamp() / TimeSpan.TicksPerMillisecond * 100ul;
+
+        private static ulong BoolArrayToFlags(bool[] bools)
         {
             ulong flags = 0ul;
             for (int i = 0; i < bools.Length; i++) flags |= (bools[i]? 1ul : 0ul) << i;
@@ -131,7 +148,7 @@ namespace Inking.Otd
         }
 
         [UnmanagedCallersOnly(EntryPoint = "get_tablet_info")]
-        public static bool GetTabletInfo(nint serialStrPtr, InkingTabletSpec spec)
+        public static bool GetTabletInfo(nint serialStrPtr, TabletInfo spec)
         {
             string? serial = Marshal.PtrToStringUTF8(serialStrPtr);
             if (serial == null) return false;
@@ -143,16 +160,8 @@ namespace Inking.Otd
 
             spec.TabletName = convertString(tabletConfig.Name);
             spec.MaxPressure = tabletSpec.Pen.MaxPressure;
-            spec.PhysicalSize = new System.Numerics.Vector2()
-            {
-                X = tabletSpec.Digitizer.Width,
-                Y = tabletSpec.Digitizer.Height
-            };
-            spec.InputSize = new System.Numerics.Vector2()
-            {
-                X = tabletSpec.Digitizer.MaxX,
-                Y = tabletSpec.Digitizer.MaxY
-            };
+            spec.PhysicalSize = new Vector2() { X = tabletSpec.Digitizer.Width, Y = tabletSpec.Digitizer.Height };
+            spec.InputSize = new Vector2() { X = tabletSpec.Digitizer.MaxX, Y = tabletSpec.Digitizer.MaxY };
             spec.PenButtons = tabletSpec.Pen.Buttons?.ButtonCount ?? 0;
             spec.AuxButtons = tabletSpec.AuxiliaryButtons?.ButtonCount ?? 0;
             return true;

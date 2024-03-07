@@ -4,6 +4,13 @@ import io.github.nahkd123.inking.api.TabletDriver;
 import io.github.nahkd123.inking.api.util.Emitter;
 
 public interface Tablet {
+	/**
+	 * <p>
+	 * Get the tablet driver that is driving this device.
+	 * </p>
+	 * 
+	 * @return The driver.
+	 */
 	public TabletDriver getDriver();
 
 	/**
@@ -30,13 +37,12 @@ public interface Tablet {
 
 	/**
 	 * <p>
-	 * Get the tablet specifications. This includes the tablet's display name, its
-	 * physical size and the packet input size.
+	 * Get the information of this tablet.
 	 * </p>
 	 * 
-	 * @return The tablet specificatons.
+	 * @return The info of this tablet.
 	 */
-	public TabletSpec getSpec();
+	public TabletInfo getInfo();
 
 	/**
 	 * <p>

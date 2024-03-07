@@ -11,8 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import io.github.nahkd123.inking.api.TabletDriver;
-import io.github.nahkd123.inking.api.tablet.TabletSpec;
-import io.github.nahkd123.inking.api.util.Vector2;
+import io.github.nahkd123.inking.api.tablet.TabletInfo;
 import io.github.nahkd123.inking.otd.OpenTabletDriver;
 import io.github.nahkd123.inking.otd.netnative.OtdNative;
 
@@ -33,12 +32,11 @@ public class TabletPollingRateMain {
 		Map<String, List<Long>> history = new HashMap<>();
 
 		driver.getTabletDiscoverEmitter().listen(tablet -> {
-			TabletSpec spec = tablet.getSpec();
-			Vector2 physicalSize = spec.getPhysicalSize().get();
-
+			TabletInfo spec = tablet.getInfo();
 			System.out.println("New tablet discovered: " + tablet.getTabletId());
-			System.out.println("  Name:          " + spec.getTabletName());
-			System.out.println("  Physical size: " + physicalSize.x() + "mm x " + physicalSize.y() + "mm");
+			System.out.println("  Device name:   " + spec.getTabletName());
+			System.out.println("  Physical size: " + spec.getPhysicalSize().get());
+			System.out.println("  Input size:    " + spec.getInputSize().get());
 
 			tablet.getPacketsEmitter().listen(packet -> {
 				counter.put(tablet.getTabletId(), counter.getOrDefault(tablet.getTabletId(), 0L) + 1L);

@@ -1,6 +1,8 @@
 package io.github.nahkd123.inking.api.tablet;
 
-import io.github.nahkd123.inking.api.util.ConstantVector2;
+import io.github.nahkd123.inking.api.util.Flag;
+import io.github.nahkd123.inking.api.util.Flags;
+import io.github.nahkd123.inking.api.util.MeasurementUnit;
 import io.github.nahkd123.inking.api.util.Vector2;
 
 /**
@@ -13,13 +15,23 @@ import io.github.nahkd123.inking.api.util.Vector2;
 public interface Packet {
 	/**
 	 * <p>
-	 * Get the pen position that is within the tablet input rectangle. If
-	 * {@link #isPenNear()} returns {@code false}, the value returned from this
-	 * method is the last position.
+	 * Get the pen's nib/eraser position in the tablet area.
 	 * </p>
 	 * <p>
-	 * <b>Windows Ink</b>: The pen position is the pixel position on the window,
-	 * with its origin from the top-left of the window.
+	 * If the unit is {@link MeasurementUnit#UNITLESS}, the pen's position is
+	 * located inside the tablet's input area, which is reported from
+	 * {@link TabletInfo#getInputSize()}, which also means the driver must be able
+	 * to read the absolute position of the pen.
+	 * </p>
+	 * <p>
+	 * If the unit have {@link MeasurementUnit#getBaseUnit()} of
+	 * {@link MeasurementUnit#METER}, the pen's position is located inside the
+	 * tablet's physical area, which is reported from
+	 * {@link TabletInfo#getPhysicalSize()}.
+	 * </p>
+	 * <p>
+	 * If the unit is {@link MeasurementUnit#PIXEL}, the pen's position is relative
+	 * to the current window (depending on how the tablet object was created).
 	 * </p>
 	 * 
 	 * @return The pen position.
@@ -28,91 +40,59 @@ public interface Packet {
 
 	/**
 	 * <p>
-	 * Get the raw pen pressure that is clamped under the tablet's maximum pressure
-	 * value. If {@link #isPenNear()} returns {@code false}, the value returned from
-	 * this method will be {@code 0}.
+	 * Get the pen's raw pressure reported from tablet. The maximum value is defined
+	 * in {@link TabletInfo#getMaxPressure()}.
 	 * </p>
 	 * 
-	 * @return Raw pressure value.
+	 * @return The current raw pressure of the pen reported from this packet.
 	 */
 	public int getRawPressure();
 
 	/**
 	 * <p>
-	 * Check if the pen's nib is being pressed against the tablet surface. The
-	 * returned value is always {@code false} if {@link #isPenNear()} returns
-	 * {@code false}.
+	 * Get pen states as bit flags. Use {@link Flags#is(Flag)} with {@link PenState}
+	 * to check the pen state from this packet.
 	 * </p>
 	 * 
-	 * @return Pen down state.
+	 * @return The pen states.
 	 */
-	public boolean isPenDown();
+	public Flags getPenStates();
+
+	default boolean isPenDown() { return getPenStates().is(PenState.PEN_DOWN); }
+
+	default boolean isEraser() { return getPenStates().is(PenState.ERASER); }
 
 	/**
 	 * <p>
-	 * Get the nanoseconds timestamp value for this packet. The timestamp should be
-	 * obtained from input thread of the tablet/driver.
+	 * Get the timestamp reported from this packet. Can be used for stroke
+	 * smoothing.
 	 * </p>
 	 * 
-	 * @return The timestamp.
+	 * @return The timestamp of this packet.
 	 */
 	public long getTimestamp();
 
 	/**
 	 * <p>
-	 * Check if the nib is the eraser. Returns {@code false} if the tablet does not
-	 * support erasers or the pen is not near the tablet.
+	 * Get the raw hovering distance from this packet. Some tablets may not report
+	 * hovering distance. As such, Inking will tries to emulate the hovering
+	 * distance by returning 0 if {@link #isPenDown()} is true and 1 otherwise.
 	 * </p>
 	 * 
-	 * @return Eraser state.
-	 */
-	default boolean isEraser() { return false; }
-
-	/**
-	 * <p>
-	 * Get the pen hovering distance. If the tablet does not support checking
-	 * hovering distance, it will returns {@code 0} if the pen is touching the
-	 * surface, {@code 1} otherwise.
-	 * </p>
-	 * <p>
-	 * This method shouldn't be used for checking if the pen is touching the
-	 * surface; use {@link #isPenDown()} instead. This is because the value returned
-	 * from this method might be not {@code 0}, even though the pen is, in fact,
-	 * being held down.
-	 * </p>
-	 * <p>
-	 * If {@link #isPenNear()} is {@code false}, the returned value from this method
-	 * will be the last value.
-	 * </p>
-	 * 
-	 * @return The pen hovering distance.
+	 * @return The raw hovering distance.
 	 */
 	default int getRawHoverDistance() { return isPenDown() ? 0 : 1; }
 
 	/**
 	 * <p>
-	 * Get the pen tilt angles. If the tablet does not support tilting, it will
-	 * returns {@link ConstantVector2#ZERO}. Please note that the object
-	 * implementing {@link Vector2} returned from this method can be something other
-	 * than {@link ConstantVector2} (it read directly from raw packet data for
-	 * example).
+	 * Get the tilting angles of the pen from this packet. The measurement unit can
+	 * be either {@link MeasurementUnit#DEGREE} or {@link MeasurementUnit#RADIAN}.
 	 * </p>
 	 * 
-	 * @return The tilting angles.
+	 * @return The tilting angle.
 	 */
-	default Vector2 getTilt() { return ConstantVector2.ZERO; }
+	default Vector2 getTilt() { return Vector2.ANGLE_ZERO; }
 
-	/**
-	 * <p>
-	 * Check if the pen or auxiliary button is being held down. The default return
-	 * value is always {@code false}.
-	 * </p>
-	 * 
-	 * @param type  The button type.
-	 * @param index The button index. If the index is out of bounds, the method will
-	 *              returns {@code false}.
-	 * @return The button held down state.
-	 */
 	default boolean isButtonDown(ButtonType type, int index) {
 		return false;
 	}

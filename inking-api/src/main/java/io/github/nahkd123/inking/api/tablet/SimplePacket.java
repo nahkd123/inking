@@ -1,74 +1,28 @@
 package io.github.nahkd123.inking.api.tablet;
 
-import java.util.Arrays;
-
+import io.github.nahkd123.inking.api.util.Flags;
 import io.github.nahkd123.inking.api.util.Vector2;
 
-/**
- * <p>
- * A very simple {@link Packet} implementation.
- * </p>
- */
-public class SimplePacket implements Packet {
-	private long timestamp;
-	private boolean penDown;
-	private boolean eraser;
-	private Vector2 position;
-	private Vector2 tilt;
-	private int rawPressure;
-	private int rawHoveringDistance;
-	private boolean[] penButtons;
-	private boolean[] auxButtons;
-
-	public SimplePacket(long timestamp, boolean penDown, boolean eraser, Vector2 position, Vector2 tilt, int rawPressure, int rawHoveringDistance, boolean[] penButtons, boolean[] auxButtons) {
-		this.timestamp = timestamp;
-		this.penDown = penDown;
-		this.eraser = eraser;
-		this.position = position;
-		this.tilt = tilt;
-		this.rawPressure = rawPressure;
-		this.rawHoveringDistance = rawHoveringDistance;
-		this.penButtons = penButtons;
-		this.auxButtons = auxButtons;
+public record SimplePacket(Vector2 penPosition, int rawPressure, Flags states, long penButtons, long auxButtons, long timestamp) implements Packet {
+	public SimplePacket(Vector2 penPosition, int rawPressure, long flags, long penButtons, long auxButtons, long timestamp) {
+		this(penPosition, rawPressure, new Flags(flags), penButtons, auxButtons, timestamp);
 	}
 
 	@Override
-	public long getTimestamp() { return timestamp; }
-
-	@Override
-	public Vector2 getPenPosition() { return position; }
-
-	@Override
-	public Vector2 getTilt() { return tilt; }
+	public Vector2 getPenPosition() { return penPosition; }
 
 	@Override
 	public int getRawPressure() { return rawPressure; }
 
 	@Override
-	public int getRawHoverDistance() { return rawHoveringDistance; }
+	public Flags getPenStates() { return states; }
 
 	@Override
-	public boolean isPenDown() { return penDown; }
-
-	@Override
-	public boolean isEraser() { return eraser; }
+	public long getTimestamp() { return timestamp; }
 
 	@Override
 	public boolean isButtonDown(ButtonType type, int index) {
-		boolean[] arr = switch (type) {
-		case PEN -> penButtons;
-		case AUXILIARY -> auxButtons;
-		default -> new boolean[0];
-		};
-
-		if (index < 0 || index >= arr.length) return false;
-		return arr[index];
-	}
-
-	@Override
-	public String toString() {
-		return "SimplePacket [penDown=" + penDown + ", eraser=" + eraser + ", position=" + position + ", tilt=" + tilt
-			+ ", rawPressure=" + rawPressure + ", rawHoveringDistance=" + rawHoveringDistance + ", penButtons="
-			+ Arrays.toString(penButtons) + ", auxButtons=" + Arrays.toString(auxButtons) + "]";
+		long set = type == ButtonType.PEN ? penButtons : type == ButtonType.AUXILIARY ? auxButtons : 0L;
+		return (set & (1L << index)) != 0;
 	}
 }

@@ -6,16 +6,15 @@ import java.lang.foreign.ValueLayout;
 import java.util.Optional;
 
 import io.github.nahkd123.inking.api.tablet.ButtonType;
-import io.github.nahkd123.inking.api.tablet.TabletSpec;
-import io.github.nahkd123.inking.api.tablet.TabletType;
-import io.github.nahkd123.inking.api.util.ConstantVector2;
+import io.github.nahkd123.inking.api.tablet.TabletInfo;
+import io.github.nahkd123.inking.api.util.MeasurementUnit;
 import io.github.nahkd123.inking.api.util.Vector2;
 
-public class OtdTabletSpec implements TabletSpec {
+public class OtdTabletSpec implements TabletInfo {
 	private String tabletName;
 	private int maxPressure;
 	private Optional<Vector2> physicalSize;
-	private Vector2 inputSize;
+	private Optional<Vector2> inputSize;
 	private int penButtons;
 	private int auxButtons;
 
@@ -26,8 +25,8 @@ public class OtdTabletSpec implements TabletSpec {
 		float pH = memory.get(ValueLayout.JAVA_FLOAT, ValueLayout.ADDRESS.byteSize() + 8L);
 		float iW = memory.get(ValueLayout.JAVA_FLOAT, ValueLayout.ADDRESS.byteSize() + 12L);
 		float iH = memory.get(ValueLayout.JAVA_FLOAT, ValueLayout.ADDRESS.byteSize() + 16L);
-		physicalSize = Optional.of(new ConstantVector2(pW, pH));
-		inputSize = new ConstantVector2(iW, iH);
+		physicalSize = Optional.of(new Vector2(pW, pH, MeasurementUnit.MILLIMETER));
+		inputSize = Optional.of(new Vector2(iW, iH));
 		penButtons = memory.get(ValueLayout.JAVA_INT, ValueLayout.ADDRESS.byteSize() + 20L);
 		auxButtons = memory.get(ValueLayout.JAVA_INT, ValueLayout.ADDRESS.byteSize() + 24L);
 	}
@@ -36,16 +35,13 @@ public class OtdTabletSpec implements TabletSpec {
 	public String getTabletName() { return tabletName; }
 
 	@Override
-	public TabletType getTabletType() { return TabletType.PHYSICAL; }
-
-	@Override
 	public int getMaxPressure() { return maxPressure; }
 
 	@Override
 	public Optional<Vector2> getPhysicalSize() { return physicalSize; }
 
 	@Override
-	public Vector2 getInputSize() { return inputSize; }
+	public Optional<Vector2> getInputSize() { return inputSize; }
 
 	@Override
 	public int getButtonsCount(ButtonType type) {

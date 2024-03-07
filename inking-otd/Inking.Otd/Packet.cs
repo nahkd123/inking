@@ -2,14 +2,15 @@
 
 namespace Inking.Otd
 {
-    public struct InkingPacket
+    public struct Packet
     {
-        public ulong Flags;
+        public PenState States;
         public Vector2 Position;
-        public Vector2 Tilt;
+        public Vector2 Tilt; // always degree
         public uint Pressure;
         public uint HoverDistance;
         public ulong PenButtons;
         public ulong AuxButtons;
+        public ulong Timestamp;
     }
 }

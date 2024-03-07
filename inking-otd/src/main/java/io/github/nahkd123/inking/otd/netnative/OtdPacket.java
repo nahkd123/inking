@@ -6,13 +6,13 @@ import java.lang.foreign.ValueLayout;
 
 import io.github.nahkd123.inking.api.tablet.ButtonType;
 import io.github.nahkd123.inking.api.tablet.Packet;
-import io.github.nahkd123.inking.api.util.ConstantVector2;
+import io.github.nahkd123.inking.api.util.Flags;
+import io.github.nahkd123.inking.api.util.MeasurementUnit;
 import io.github.nahkd123.inking.api.util.Vector2;
 
 public class OtdPacket implements Packet {
-	private static final long FLAG_ERASER = 0b00000001L;
 	private long timestamp;
-	private long flags;
+	private Flags states;
 	private Vector2 position;
 	private Vector2 tilt;
 	private int pressure;
@@ -28,15 +28,16 @@ public class OtdPacket implements Packet {
 	 * 
 	 * @param memory The memory segment.
 	 */
-	public OtdPacket(MemorySegment memory, long timestamp) {
-		flags = memory.get(ValueLayout.JAVA_LONG, 0L);
-		position = new ConstantVector2(memory.get(ValueLayout.JAVA_FLOAT, 8L), memory.get(ValueLayout.JAVA_FLOAT, 12L));
-		tilt = new ConstantVector2(memory.get(ValueLayout.JAVA_FLOAT, 16L), memory.get(ValueLayout.JAVA_FLOAT, 20L));
+	public OtdPacket(MemorySegment memory) {
+		states = new Flags(memory.get(ValueLayout.JAVA_LONG, 0L));
+		position = new Vector2(memory.get(ValueLayout.JAVA_FLOAT, 8L), memory.get(ValueLayout.JAVA_FLOAT, 12L));
+		tilt = new Vector2(memory.get(ValueLayout.JAVA_FLOAT, 16L), memory.get(ValueLayout.JAVA_FLOAT,
+			20L), MeasurementUnit.DEGREE);
 		pressure = memory.get(ValueLayout.JAVA_INT, 24L);
 		hoverDistance = memory.get(ValueLayout.JAVA_INT, 28L);
 		penButtons = memory.get(ValueLayout.JAVA_INT, 32L);
 		auxButtons = memory.get(ValueLayout.JAVA_INT, 40L);
-		this.timestamp = timestamp;
+		timestamp = memory.get(ValueLayout.JAVA_LONG, 48L);
 	}
 
 	@Override
@@ -52,13 +53,10 @@ public class OtdPacket implements Packet {
 	public int getRawPressure() { return pressure; }
 
 	@Override
-	public boolean isEraser() { return (flags & FLAG_ERASER) != 0L; }
-
-	@Override
 	public int getRawHoverDistance() { return hoverDistance; }
 
 	@Override
-	public boolean isPenDown() { return pressure > 0; }
+	public Flags getPenStates() { return states; }
 
 	@Override
 	public boolean isButtonDown(ButtonType type, int index) {
@@ -73,12 +71,13 @@ public class OtdPacket implements Packet {
 
 	public static MemoryLayout layout() {
 		return MemoryLayout.structLayout(
-			ValueLayout.JAVA_LONG.withName("flags"),
+			ValueLayout.JAVA_LONG.withName("states"),
 			MemoryLayout.sequenceLayout(2L, ValueLayout.JAVA_FLOAT).withName("position"),
 			MemoryLayout.sequenceLayout(2L, ValueLayout.JAVA_FLOAT).withName("tilt"),
 			ValueLayout.JAVA_INT.withName("pressure"),
 			ValueLayout.JAVA_INT.withName("hoverDistance"),
 			ValueLayout.JAVA_LONG.withName("penButtons"),
-			ValueLayout.JAVA_LONG.withName("auxButtons"));
+			ValueLayout.JAVA_LONG.withName("auxButtons"),
+			ValueLayout.JAVA_LONG.withName("timestamp"));
 	}
 }

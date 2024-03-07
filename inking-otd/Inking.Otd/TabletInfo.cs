@@ -2,7 +2,7 @@
 
 namespace Inking.Otd
 {
-    public struct InkingTabletSpec
+    public struct TabletInfo
     {
         public nint TabletName;
         public uint MaxPressure;

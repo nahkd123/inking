@@ -26,7 +26,7 @@ public class TabletsListMain {
 		Thread.sleep(1000);
 
 		for (Tablet tablet : driver.getConnectedTablets()) {
-			System.out.println("Tablet: " + tablet.getTabletId() + ": " + tablet.getSpec().getTabletName());
+			System.out.println("Tablet: " + tablet.getTabletId() + ": " + tablet.getInfo().getTabletName());
 		}
 	}
 }
