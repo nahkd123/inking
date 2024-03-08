@@ -7,11 +7,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.jupiter.api.Test;
 
 import io.github.nahkd123.inking.api.tablet.Packet;
-import io.github.nahkd123.inking.api.tablet.SimplePacket;
 import io.github.nahkd123.inking.api.tablet.Tablet;
-import io.github.nahkd123.inking.api.util.Flags;
-import io.github.nahkd123.inking.api.util.MeasurementUnit;
-import io.github.nahkd123.inking.api.util.Vector2;
 
 class FiltersListTest {
 	@SuppressWarnings("rawtypes")
@@ -56,12 +52,12 @@ class FiltersListTest {
 			}
 		});
 
-		filters.push(null, new SimplePacket(new Vector2(0, 0, MeasurementUnit.PIXEL), 0, new Flags(0), 0, 0, 0));
+		filters.push(null, null);
 		assertEquals(6, applicationCounter.get());
 		assertEquals(4, filterCounter.get());
 
 		filters.removeTail();
-		filters.push(null, new SimplePacket(new Vector2(0, 0, MeasurementUnit.PIXEL), 0, new Flags(0), 0, 0, 0));
+		filters.push(null, null);
 		assertEquals(6 + 2, applicationCounter.get());
 		assertEquals(4 + 2, filterCounter.get());
 		assertEquals(2, filters.getAsList().size());
