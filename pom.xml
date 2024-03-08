@@ -7,12 +7,15 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<name>Inking</name>
 	<properties>
+		<maven.compiler.source>17</maven.compiler.source>
+		<maven.compiler.target>17</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 	<packaging>pom</packaging>
 	<modules>
 		<module>inking-api</module>
 		<module>inking-manager</module>
+		<module>inking-internal-java21</module>
 		<module>inking-otd</module>
 		<module>inking-sample-otd</module>
 	</modules>
@@ -26,6 +29,11 @@
 			<dependency>
 				<groupId>io.github.nahkd123</groupId>
 				<artifactId>inking-manager</artifactId>
+				<version>0.0.1-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>io.github.nahkd123</groupId>
+				<artifactId>inking-internal-java21</artifactId>
 				<version>0.0.1-SNAPSHOT</version>
 			</dependency>
 			<dependency>
@@ -61,17 +69,4 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.11.0</version>
-				<configuration>
-					<release>21</release>
-					<enablePreview>true</enablePreview>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
 </project>

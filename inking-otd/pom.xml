@@ -15,12 +15,25 @@
 			<artifactId>inking-api</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>io.github.nahkd123</groupId>
+			<artifactId>inking-internal-java21</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
 		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.11.0</version>
+				<configuration>
+					<release>21</release>
+					<enablePreview>true</enablePreview>
+				</configuration>
+			</plugin>
 			<plugin>
 				<groupId>org.codehaus.gmaven</groupId>
 				<artifactId>groovy-maven-plugin</artifactId>
