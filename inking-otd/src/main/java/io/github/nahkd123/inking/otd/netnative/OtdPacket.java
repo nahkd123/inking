@@ -59,14 +59,12 @@ public class OtdPacket implements Packet {
 	public Flags getPenStates() { return states; }
 
 	@Override
-	public boolean isButtonDown(ButtonType type, int index) {
-		long btnFlags = switch (type) {
+	public long getButtonsDown(ButtonType type) {
+		return switch (type) {
 		case PEN -> penButtons;
 		case AUXILIARY -> auxButtons;
 		default -> 0L;
 		};
-
-		return (btnFlags & (1L << index)) != 0;
 	}
 
 	public static MemoryLayout layout() {

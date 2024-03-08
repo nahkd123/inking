@@ -93,7 +93,22 @@ public interface Packet {
 	 */
 	default Vector2 getTilt() { return Vector2.ANGLE_ZERO; }
 
+	/**
+	 * <p>
+	 * Get a set of (up to 64) flags where each flag is a button being held down
+	 * (a.k.a being pressed). You can use {@link #isButtonDown(ButtonType, int)} to
+	 * check individual button, or use this with a bit of bitwise operations.
+	 * </p>
+	 * 
+	 * @param type The type of button.
+	 * @return A set of flags composed in a single 64-bit integer. The least
+	 *         significant bit is the first button (index 0).
+	 */
+	default long getButtonsDown(ButtonType type) {
+		return 0L;
+	}
+
 	default boolean isButtonDown(ButtonType type, int index) {
-		return false;
+		return (getButtonsDown(type) & (1L << index)) != 0L;
 	}
 }
