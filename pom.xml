@@ -12,6 +12,7 @@
 	<packaging>pom</packaging>
 	<modules>
 		<module>inking-api</module>
+		<module>inking-manager</module>
 		<module>inking-otd</module>
 		<module>inking-sample-otd</module>
 	</modules>
@@ -20,6 +21,11 @@
 			<dependency>
 				<groupId>io.github.nahkd123</groupId>
 				<artifactId>inking-api</artifactId>
+				<version>0.0.1-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>io.github.nahkd123</groupId>
+				<artifactId>inking-manager</artifactId>
 				<version>0.0.1-SNAPSHOT</version>
 			</dependency>
 			<dependency>
