@@ -1,7 +1,6 @@
 package io.github.nahkd123.inking.api.manager.config;
 
 import java.util.Optional;
-import java.util.function.Supplier;
 
 import io.github.nahkd123.inking.api.manager.Rectangle;
 import io.github.nahkd123.inking.api.manager.filtering.FiltersList;
@@ -30,11 +29,11 @@ public class TabletConfig {
 
 	public FiltersList getFilters() { return filters; }
 
-	public static TabletConfig createDefault(Tablet tablet, Supplier<FiltersList> defaultFilters) {
+	public static TabletConfig createDefault(Tablet tablet) {
 		TabletInfo info = tablet.getInfo();
 		AreaConfig areaConfig = info.getInputSize()
 			.map(size -> new AreaConfig(new Rectangle(0, 0, size.x(), size.y(), MeasurementUnit.UNITLESS), true))
 			.orElse(null);
-		return new TabletConfig(tablet.getTabletId(), info, areaConfig, defaultFilters.get());
+		return new TabletConfig(tablet.getTabletId(), info, areaConfig, new FiltersList());
 	}
 }

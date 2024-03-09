@@ -3,61 +3,76 @@ package io.github.nahkd123.inking.api.manager.filtering;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 
 import org.junit.jupiter.api.Test;
 
 import io.github.nahkd123.inking.api.tablet.Packet;
-import io.github.nahkd123.inking.api.tablet.Tablet;
 
 class FiltersListTest {
-	@SuppressWarnings("rawtypes")
+	@FunctionalInterface
+	interface Filterer {
+		void filterPacket(Packet packet, Consumer<Packet> pusher, FilterHost host);
+	}
+
+	class SimpleFilterFactory implements FilterFactory<SimpleFilter> {
+		private Filterer filter;
+
+		public SimpleFilterFactory(Filterer filter) {
+			this.filter = filter;
+		}
+
+		@Override
+		public SimpleFilter createDefaultFilter() {
+			return new SimpleFilter(this);
+		}
+	}
+
+	class SimpleFilter implements TabletFilter<SimpleFilter> {
+		private SimpleFilterFactory factory;
+
+		public SimpleFilter(SimpleFilterFactory factory) {
+			this.factory = factory;
+		}
+
+		@Override
+		public FilterFactory<SimpleFilter> getFactory() { return factory; }
+
+		@Override
+		public void filterPacket(Packet packet, Consumer<Packet> pusher, FilterHost host) {
+			factory.filter.filterPacket(packet, pusher, host);
+		}
+	}
+
 	@Test
 	void test() {
 		AtomicInteger applicationCounter = new AtomicInteger(0);
 		AtomicInteger filterCounter = new AtomicInteger(0);
-		FiltersList filters = new FiltersList(p -> applicationCounter.addAndGet(1));
-		TabletFilter a, b, c;
+		FiltersList filters = new FiltersList();
+		SimpleFilter a, b, c;
 
-		filters.insertTail(a = new TabletFilter() {
-			@Override
-			public FilterFactory getFactory() { return null; }
+		filters.insertTail(a = new SimpleFilterFactory((packet, pusher, host) -> {
+			filterCounter.addAndGet(1);
+			pusher.accept(packet);
+		}).createDefaultFilter());
+		filters.insertTail(b = new SimpleFilterFactory((packet, pusher, host) -> {
+			filterCounter.addAndGet(1);
+			pusher.accept(packet);
+			pusher.accept(packet);
+		}).createDefaultFilter());
+		filters.insertTail(c = new SimpleFilterFactory((packet, pusher, host) -> {
+			filterCounter.addAndGet(1);
+			pusher.accept(packet);
+			pusher.accept(packet);
+			pusher.accept(packet);
+		}).createDefaultFilter());
 
-			@Override
-			public void filterPacket(Tablet tablet, Packet packet, FilterHost host) {
-				filterCounter.addAndGet(1);
-				host.push(tablet, packet);
-			}
-		});
-		filters.insertTail(b = new TabletFilter() {
-			@Override
-			public FilterFactory getFactory() { return null; }
-
-			@Override
-			public void filterPacket(Tablet tablet, Packet packet, FilterHost host) {
-				filterCounter.addAndGet(1);
-				host.push(tablet, packet);
-				host.push(tablet, packet);
-			}
-		});
-		filters.insertTail(c = new TabletFilter() {
-			@Override
-			public FilterFactory getFactory() { return null; }
-
-			@Override
-			public void filterPacket(Tablet tablet, Packet packet, FilterHost host) {
-				filterCounter.addAndGet(1);
-				host.push(tablet, packet);
-				host.push(tablet, packet);
-				host.push(tablet, packet);
-			}
-		});
-
-		filters.push(null, null);
+		filters.filter(null, null, p -> applicationCounter.addAndGet(1));
 		assertEquals(6, applicationCounter.get());
 		assertEquals(4, filterCounter.get());
 
 		filters.removeTail();
-		filters.push(null, null);
+		filters.filter(null, null, p -> applicationCounter.addAndGet(1));
 		assertEquals(6 + 2, applicationCounter.get());
 		assertEquals(4 + 2, filterCounter.get());
 		assertEquals(2, filters.getAsList().size());
@@ -72,10 +87,7 @@ class FiltersListTest {
 		assertEquals(a, filters.getAt(1));
 		assertEquals(b, filters.getAt(2));
 
-		filters.insertAt(1, new TabletFilter() {
-			@Override
-			public FilterFactory getFactory() { return null; }
-		});
+		filters.insertAt(1, new SimpleFilterFactory((packet, pusher, host) -> {}).createDefaultFilter());
 		assertEquals(0, filters.indexOf(c));
 		assertEquals(2, filters.indexOf(a));
 		assertEquals(3, filters.indexOf(b));

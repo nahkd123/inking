@@ -18,6 +18,15 @@ public interface FilterFactory<T extends TabletFilter<T>> {
 
 	/**
 	 * <p>
+	 * Get the display name of this tablet filter.
+	 * </p>
+	 * 
+	 * @return The filter name.
+	 */
+	default String getFilterName() { return this.getClass().getName(); }
+
+	/**
+	 * <p>
 	 * Get a list of configurable handles. The handles will be used for
 	 * saving/loading filter configurations, as well as displaying the configurable
 	 * handles in UI.

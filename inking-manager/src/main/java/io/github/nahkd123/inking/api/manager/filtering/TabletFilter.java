@@ -1,10 +1,10 @@
 package io.github.nahkd123.inking.api.manager.filtering;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 import io.github.nahkd123.inking.api.manager.config.Configurable;
 import io.github.nahkd123.inking.api.tablet.Packet;
-import io.github.nahkd123.inking.api.tablet.Tablet;
 
 public interface TabletFilter<T extends TabletFilter<T>> {
 	public FilterFactory<T> getFactory();
@@ -13,17 +13,19 @@ public interface TabletFilter<T extends TabletFilter<T>> {
 	 * <p>
 	 * Filter the incoming packet. The packet can be either directly from tablet or
 	 * from other filters in the filters chain. Default behavior for this is
-	 * passthrough (send the received packet instantly to
-	 * {@link FilterHost#push(Packet)}.
+	 * passthrough (send the received packet instantly to pusher.
 	 * </p>
 	 * 
-	 * @param tablet The tablet that created the first packet in the filters chain.
 	 * @param packet The received packet.
-	 * @param host   The host that is hosting this tablet filter. You can use this
-	 *               to push packets.
+	 * @param pusher The packets pusher. Pushing packets through this pusher will
+	 *               either send the packet to the next filter in the chain, or send
+	 *               it directly to application.
+	 * @param host   The host that is hosting this tablet filter. You can obtain
+	 *               various information about the driver host, like application
+	 *               window size for example.
 	 */
-	default void filterPacket(Tablet tablet, Packet packet, FilterHost host) {
-		host.push(tablet, packet);
+	default void filterPacket(Packet packet, Consumer<Packet> pusher, FilterHost host) {
+		pusher.accept(packet);
 	}
 
 	@SuppressWarnings("unchecked")

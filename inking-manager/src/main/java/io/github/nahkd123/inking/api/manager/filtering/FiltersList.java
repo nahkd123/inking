@@ -6,51 +6,40 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import io.github.nahkd123.inking.api.tablet.Packet;
-import io.github.nahkd123.inking.api.tablet.Tablet;
-import io.github.nahkd123.inking.api.util.EmitterSource;
 
-public class FiltersList implements FilterHost {
-	private Consumer<Packet> consumer;
+public class FiltersList {
 	private Entry head = null, tail = null;
 
-	private class Entry implements FilterHost {
-		private FiltersList list;
+	private class Entry {
 		private TabletFilter<?> filter;
 		private Entry previous = null, next = null;
 
-		public Entry(FiltersList list, TabletFilter<?> filter) {
-			this.list = list;
+		public Entry(TabletFilter<?> filter) {
 			this.filter = filter;
 		}
 
-		@Override
-		public void push(Tablet tablet, Packet packet) {
-			if (next != null) next.filter.filterPacket(tablet, packet, next);
-			else list.consumer.accept(packet);
+		public void filter(Packet packet, FilterHost host, Consumer<Packet> consumer) {
+			Consumer<Packet> pusher = next != null
+				? p -> next.filter.filterPacket(p, filtered -> next.filter(filtered, host, consumer), host)
+				: consumer;
+			pusher.accept(packet);
 		}
 	}
 
-	public FiltersList(Consumer<Packet> consumer) {
-		this.consumer = consumer;
-	}
-
-	public FiltersList(EmitterSource<Packet> emitter) {
-		this(emitter::push);
-	}
-
-	@Override
-	public void push(Tablet tablet, Packet packet) {
-		if (head != null) head.filter.filterPacket(tablet, packet, head);
-		else consumer.accept(packet);
+	public void filter(Packet packet, FilterHost host, Consumer<Packet> consumer) {
+		Consumer<Packet> pusher = head != null
+			? p -> head.filter.filterPacket(p, filtered -> head.filter(filtered, host, consumer), host)
+			: consumer;
+		pusher.accept(packet);
 	}
 
 	public void insertTail(TabletFilter<?> filter) {
 		if (tail == null) {
-			head = tail = new Entry(this, filter);
+			head = tail = new Entry(filter);
 			return;
 		}
 
-		Entry e = new Entry(this, filter);
+		Entry e = new Entry(filter);
 		e.previous = tail;
 		tail.next = e;
 		tail = e;
@@ -65,11 +54,11 @@ public class FiltersList implements FilterHost {
 
 	public void insertHead(TabletFilter<?> filter) {
 		if (head == null) {
-			head = tail = new Entry(this, filter);
+			head = tail = new Entry(filter);
 			return;
 		}
 
-		Entry e = new Entry(this, filter);
+		Entry e = new Entry(filter);
 		e.next = head;
 		head.previous = e;
 		head = e;
@@ -127,7 +116,7 @@ public class FiltersList implements FilterHost {
 
 		while (e != null) {
 			if (i == index) {
-				Entry newEntry = new Entry(this, filter);
+				Entry newEntry = new Entry(filter);
 				Entry prev = e.previous;
 				prev.next = newEntry;
 				newEntry.previous = prev;
