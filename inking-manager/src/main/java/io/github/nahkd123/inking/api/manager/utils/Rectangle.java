@@ -1,4 +1,4 @@
-package io.github.nahkd123.inking.api.manager;
+package io.github.nahkd123.inking.api.manager.utils;
 
 import io.github.nahkd123.inking.api.util.MeasurementUnit;
 import io.github.nahkd123.inking.api.util.Vector2;

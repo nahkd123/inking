@@ -2,8 +2,8 @@ package io.github.nahkd123.inking.api.manager.config;
 
 import java.util.Optional;
 
-import io.github.nahkd123.inking.api.manager.Rectangle;
-import io.github.nahkd123.inking.api.manager.XYConsumer;
+import io.github.nahkd123.inking.api.manager.utils.Rectangle;
+import io.github.nahkd123.inking.api.manager.utils.XYConsumer;
 import io.github.nahkd123.inking.api.tablet.TabletInfo;
 import io.github.nahkd123.inking.api.util.MeasurementUnit;
 
