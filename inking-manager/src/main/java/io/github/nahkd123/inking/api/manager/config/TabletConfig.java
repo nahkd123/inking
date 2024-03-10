@@ -10,13 +10,11 @@ import io.github.nahkd123.inking.api.manager.filtering.FiltersList;
 import io.github.nahkd123.inking.api.manager.filtering.HostHasSize;
 import io.github.nahkd123.inking.api.manager.utils.MappingGraph;
 import io.github.nahkd123.inking.api.manager.utils.Rectangle;
-import io.github.nahkd123.inking.api.tablet.ButtonType;
+import io.github.nahkd123.inking.api.tablet.MutablePacket;
 import io.github.nahkd123.inking.api.tablet.Packet;
-import io.github.nahkd123.inking.api.tablet.SimplePacket;
 import io.github.nahkd123.inking.api.tablet.Tablet;
 import io.github.nahkd123.inking.api.tablet.TabletInfo;
 import io.github.nahkd123.inking.api.util.MeasurementUnit;
-import io.github.nahkd123.inking.api.util.Vector2;
 
 public class TabletConfig {
 	private String tabletId;
@@ -43,29 +41,16 @@ public class TabletConfig {
 
 	public FiltersList getFilters() { return filters; }
 
-	public void applyFilter(Packet packet, FilterHost host, Consumer<Packet> callback) {
+	public void filter(Packet packet, FilterHost host, Consumer<Packet> callback) {
 		List<Packet> packets = new ArrayList<>();
 		filters.filter(packet, host, packets::add);
 
 		packets.forEach(partiallyFiltered -> {
-			Vector2 penPos = partiallyFiltered.getPenPosition();
-			penPos = host instanceof HostHasSize sizeHost && penPos.unit() == MeasurementUnit.UNITLESS
-				? areaConfig.map(partiallyFiltered.getPenPosition(), sizeHost.getHostSize())
-				: partiallyFiltered.getPenPosition();
-			int pressure = pressureMapping.map(partiallyFiltered.getRawPressure(), info.getMaxPressure());
+			MutablePacket filtered = MutablePacket.mutableOf(packet);
 
-			// TODO mutable packets
-			// @formatter:off
-			Packet filtered = new SimplePacket(
-				penPos,
-				partiallyFiltered.getTilt(),
-				pressure,
-				partiallyFiltered.getRawHoverDistance(),
-				partiallyFiltered.getPenStates(),
-				partiallyFiltered.getButtonsDown(ButtonType.PEN),
-				partiallyFiltered.getButtonsDown(ButtonType.AUXILIARY),
-				partiallyFiltered.getTimestamp());
-			// @formatter:on
+			if (host instanceof HostHasSize sizeHost && filtered.getPenPosition().unit() == MeasurementUnit.UNITLESS)
+				filtered.setPenPosition(areaConfig.map(partiallyFiltered.getPenPosition(), sizeHost.getHostSize()));
+			filtered.setRawPressure(pressureMapping.map(filtered.getRawPressure(), info.getMaxPressure()));
 
 			callback.accept(filtered);
 		});
