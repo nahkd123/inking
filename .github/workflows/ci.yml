@@ -90,19 +90,19 @@ jobs:
         with:
           name: windows-natives
           path: |
-            inking-otd/src/main/resources/natives/**/*
+            inking-otd/src/main/resources/natives/
       - name: Download Linux Natives
         uses: actions/download-artifact@v4
         with:
           name: linux-natives
           path: |
-            inking-otd/src/main/resources/natives/**/*
+            inking-otd/src/main/resources/natives/
       - name: Download OSX Natives
         uses: actions/download-artifact@v4
         with:
           name: osx-natives
           path: |
-            inking-otd/src/main/resources/natives/**/*
+            inking-otd/src/main/resources/natives/
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
