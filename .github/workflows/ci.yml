@@ -105,6 +105,7 @@ jobs:
             inking-otd/src/main/resources/natives/**/*
       - uses: actions/setup-java@v4
         with:
+          distribution: temurin
           java-version: 21
           cache: maven
       - name: Build with Maven
