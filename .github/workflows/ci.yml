@@ -78,3 +78,38 @@ jobs:
           name: osx-natives
           path: |
             inking-otd/src/main/resources/natives/**/*
+  java:
+    name: Inking
+    needs: [win-natives, linux-natives, osx-natives]
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download Windows Natives
+        uses: actions/download-artifact@v4
+        with:
+          name: windows-natives
+          path: |
+            inking-otd/src/main/resources/natives/**/*
+      - name: Download Linux Natives
+        uses: actions/download-artifact@v4
+        with:
+          name: linux-natives
+          path: |
+            inking-otd/src/main/resources/natives/**/*
+      - name: Download OSX Natives
+        uses: actions/download-artifact@v4
+        with:
+          name: osx-natives
+          path: |
+            inking-otd/src/main/resources/natives/**/*
+      - uses: actions/setup-java@v4
+        with:
+          java-version: 21
+          cache: maven
+      - name: Build with Maven
+        run: mvn -B package --file pom.xml
+      - uses: actions/upload-artifact@v4
+        with:
+          name: inking-artifacts
+          path: '*/target/*.jar'
