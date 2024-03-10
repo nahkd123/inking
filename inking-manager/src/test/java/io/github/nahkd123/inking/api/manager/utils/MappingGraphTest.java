@@ -8,14 +8,11 @@ class MappingGraphTest {
 	@Test
 	void test() {
 		MappingGraph graph = new MappingGraph();
-		graph.add(0.5, 1, 1);
-		graph.add(0.75, 0.5, 1);
-		assertEquals(0, graph.map(-1, 1));
-		assertEquals(0, graph.map(0, 1));
-		assertEquals(0.5, graph.map(0.25, 1));
-		assertEquals(1, graph.map(0.5, 1));
-		assertEquals(0.5, graph.map(0.75, 1));
-		assertEquals(0.5, graph.map(1, 1));
-		assertEquals(0.5, graph.map(2, 1));
+		graph.add(512, 1024);
+		graph.add(1024, 512);
+		assertEquals(0, graph.map(0, 1024));
+		assertEquals(1024, graph.map(512, 1024));
+		assertEquals(768, graph.map(768, 1024));
+		assertEquals(512, graph.map(1024, 1024));
 	}
 }

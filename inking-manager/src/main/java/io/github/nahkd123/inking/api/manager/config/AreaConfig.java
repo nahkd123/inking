@@ -6,6 +6,7 @@ import io.github.nahkd123.inking.api.manager.utils.Rectangle;
 import io.github.nahkd123.inking.api.manager.utils.XYConsumer;
 import io.github.nahkd123.inking.api.tablet.TabletInfo;
 import io.github.nahkd123.inking.api.util.MeasurementUnit;
+import io.github.nahkd123.inking.api.util.Vector2;
 
 /**
  * <p>
@@ -96,5 +97,16 @@ public class AreaConfig {
 		double outputX = (inputX - tabletX) * outputWidth / tabletWidth;
 		double screenY = (inputY - tabletY) * outputHeight / tabletHeight;
 		setter.accept(outputX, screenY);
+	}
+
+	public Vector2 map(Vector2 input, Vector2 output) {
+		double[] xy = new double[2];
+
+		map(input.x(), input.y(), output.x(), output.y(), (x, y) -> {
+			xy[0] = x;
+			xy[1] = y;
+		});
+
+		return new Vector2(xy[0], xy[1], output.unit());
 	}
 }

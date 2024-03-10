@@ -11,53 +11,47 @@ import java.util.List;
  * </p>
  */
 public class MappingGraph {
-	private static final Dot ZERO = new Dot(0, 0, 1);
+	private static final Dot ZERO = new Dot(0, 0);
 	private List<Dot> dots = new ArrayList<>();
 
 	public static class Dot implements Comparable<Dot> {
-		private double x;
-		private double y;
-		private double exp;
+		private int x;
+		private int y;
 		private MappingGraph graph = null;
 
-		private Dot(double x, double y, double exp) {
+		private Dot(int x, int y) {
 			this.x = x;
 			this.y = y;
-			this.exp = exp;
 		}
 
-		public double getX() { return x; }
+		public int getX() { return x; }
 
-		public void setX(double x) {
+		public void setX(int x) {
 			this.x = x;
 			if (graph != null) Collections.sort(graph.dots);
 		}
 
-		public double getY() { return y; }
+		public int getY() { return y; }
 
-		public void setY(double y) { this.y = y; }
-
-		public double getExp() { return exp; }
-
-		public void setExp(double exp) { this.exp = exp; }
+		public void setY(int y) { this.y = y; }
 
 		@Override
 		public int compareTo(Dot o) {
 			return Double.compare(x, o.x);
 		}
 
-		public double map(Dot previous, double x) {
+		public int map(Dot previous, int x) {
 			if (x < previous.x) return previous.y;
 			if (x > this.x) return this.y;
-			double dx = x - previous.x;
-			double spanX = this.x - previous.y;
-			double spanY = this.y - previous.y;
-			return previous.y + spanY * Math.pow(dx / spanX, exp);
+			int dx = x - previous.x;
+			int spanX = this.x - previous.x;
+			int spanY = this.y - previous.y;
+			return previous.y + spanY * dx / spanX;
 		}
 
 		@Override
 		public String toString() {
-			return "(" + x + " [" + exp + "]=> " + y + ")";
+			return "(" + x + " => " + y + ")";
 		}
 	}
 
@@ -66,14 +60,13 @@ public class MappingGraph {
 	 * Add a new point.
 	 * </p>
 	 * 
-	 * @param x   The input value.
-	 * @param y   The desired output value for given input value.
-	 * @param exp The exponent value.
+	 * @param x The input value.
+	 * @param y The desired output value for given input value.
 	 * @return The dot, which can be used for changing the X, Y or exponent value if
 	 *         you wanted to.
 	 */
-	public Dot add(double x, double y, double exp) {
-		Dot dot = new Dot(x, y, exp);
+	public Dot add(int x, int y) {
+		Dot dot = new Dot(x, y);
 		dot.graph = this;
 		dots.add(dot);
 		Collections.sort(dots);
@@ -93,15 +86,15 @@ public class MappingGraph {
 		dots.clear();
 	}
 
-	public double map(double x, double max) {
-		int search = Collections.binarySearch(dots, new Dot(x, 0, 1));
+	public int map(int x, int max) {
+		int search = Collections.binarySearch(dots, new Dot(x, 0));
 		if (search >= 0) return dots.get(search).y;
 
 		int insert = -search - 1;
 		Dot prev = insert > 0 ? dots.get(insert - 1) : ZERO;
 		Dot next = insert < dots.size()
 			? dots.get(insert)
-			: prev == ZERO ? new Dot(max, max, 1) : prev;
+			: prev == ZERO ? new Dot(max, max) : prev;
 		return next.map(prev, x);
 	}
 }
