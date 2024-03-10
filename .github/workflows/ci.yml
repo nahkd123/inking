@@ -11,19 +11,16 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: egor-tensin/setup-mingw@v2
+        with:
+          platform: x64
+          cygwin: 1
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 8
           dotnet-quality: ga
-      - name: Setup win-x64 target
-        uses: microsoft/setup-msbuild@v2
-        with:
-          msbuild-architecture: x64
-      - name: Setup win-arm64 target
-        uses: microsoft/setup-msbuild@v2
-        with:
-          msbuild-architecture: arm64
       - name: Build NativeAOT with GNU Make (Windows x64, Windows arm64)
+        shell: bash
         run: make win-x64 win-arm64
         working-directory: inking-otd
       - uses: actions/upload-artifact@v4
