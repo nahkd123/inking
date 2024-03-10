@@ -15,6 +15,9 @@ jobs:
         with:
           dotnet-version: 8
           dotnet-quality: ga
+      - uses: egor-tensin/setup-cygwin@v4
+        with:
+          packages: make perl-Digest-SHA
       - name: Build NativeAOT with GNU Make (Windows x64, Windows arm64)
         shell: bash
         run: make win-x64 win-arm64
