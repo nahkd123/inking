@@ -79,7 +79,9 @@ extract_filename_from_copy_target = \
 extract_rid_from_copy_target = \
 	$(patsubst $(COPY_OUTPUT)/%,%,\
 	$(patsubst %/$(LIBNAME).dll,%,\
-	$(1)))
+	$(patsubst %/$(LIBNAME).so,%,\
+	$(patsubst %/$(LIBNAME).dylib,%,\
+	$(1)))))
 
 $(COPY_TARGET):
 	mkdir -p $(COPY_OUTPUT)/$(call extract_rid_from_copy_target,$@)
