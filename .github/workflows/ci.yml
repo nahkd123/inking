@@ -11,10 +11,6 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: egor-tensin/setup-mingw@v2
-        with:
-          platform: x64
-          cygwin: 1
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 8
