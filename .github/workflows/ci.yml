@@ -16,11 +16,11 @@ jobs:
           dotnet-quality: ga
       - name: Install GCC toolchains
         run: |
-          sudo apt update && sudo apt upgrade
           sudo apt install gcc gcc-aarch64-linux-gnu
+          ls -la
       - name: Build NativeAOT with GNU Make (Linux x64, Linux arm64)
         run: make linux-x64 linux-arm64
-        working-directory: inking-otd
+        working-directory: ./inking-otd
       - uses: actions/upload-artifact@v4
         with:
           name: linux-natives
