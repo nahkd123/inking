@@ -6,6 +6,31 @@ on:
     branches: ["main"]
 
 jobs:
+  win-natives:
+    name: Windows Natives
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8
+          dotnet-quality: ga
+      - name: Setup win-x64 target
+        uses: microsoft/setup-msbuild@v2
+        with:
+          msbuild-architecture: x64
+      - name: Setup win-arm64 target
+        uses: microsoft/setup-msbuild@v2
+        with:
+          msbuild-architecture: arm64
+      - name: Build NativeAOT with GNU Make (Windows x64, Windows arm64)
+        run: make win-x64 win-arm64
+        working-directory: inking-otd
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows-natives
+          path: |
+            inking-otd/src/main/resources/natives/**/*
   linux-natives:
     name: Linux Natives
     runs-on: ubuntu-latest
@@ -38,4 +63,22 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: linux-natives
-          path: inking-otd/src/main/resources/natives/**/*
+          path: |
+            inking-otd/src/main/resources/natives/**/*
+  osx-natives:
+    name: OSX Natives
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8
+          dotnet-quality: ga
+      - name: Build NativeAOT with GNU Make (OSX x64, OSX arm64)
+        run: make osx-x64 osx-arm64
+        working-directory: inking-otd
+      - uses: actions/upload-artifact@v4
+        with:
+          name: osx-natives
+          path: |
+            inking-otd/src/main/resources/natives/**/*
