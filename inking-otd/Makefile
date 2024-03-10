@@ -8,13 +8,14 @@ DOTNET_VERSION := net8.0
 DOTNET_CONFIGURATION := Release
 LIBNAME := Inking.Otd
 
+# Below is my makefile abomination
 rid_ext_win-x64 := dll
 rid_ext_win-arm64 := dll
 rid_ext_linux-x64 := so
 rid_ext_linux-arm64 := so
 rid_ext_osx-x64 := dylib
 rid_ext_osx-arm64 := dylib
-SOURCE := $(wildcard $(SLN)/*.cs)
+SOURCE := $(CSPROJ) $(wildcard $(SLN)/*.cs) $(SLN)/rd.xml
 ARCHITECTURE := x64 arm64
 PLATFORM := win linux osx
 RID := $(foreach a,$(PLATFORM),$(foreach b,$(ARCHITECTURE),$(a)-$(b)))
@@ -59,46 +60,49 @@ current-platform: $(CRID)
 
 # All possible targets
 # x86 is not supported because NativeAOT (you shouldn't use 32-bit system anyways)
-win-x64: aot-win-x64 $(COPY_OUTPUT)/win-x64/$(LIBNAME).dll $(COPY_OUTPUT)/win-x64/$(LIBNAME).dll.sha1
-win-arm64: aot-win-arm64 $(COPY_OUTPUT)/win-arm64/$(LIBNAME).dll $(COPY_OUTPUT)/win-arm64/$(LIBNAME).dll.sha1
-linux-x64: aot-linux-x64 $(COPY_OUTPUT)/linux-x64/$(LIBNAME).so $(COPY_OUTPUT)/linux-x64/$(LIBNAME).so.sha1
-linux-arm64: aot-linux-arm64 $(COPY_OUTPUT)/linux-arm64/$(LIBNAME).so $(COPY_OUTPUT)/linux-arm64/$(LIBNAME).so.sha1
-osx-x64: aot-osx-x64 $(COPY_OUTPUT)/osx-x64/$(LIBNAME).dylib $(COPY_OUTPUT)/osx-x64/$(LIBNAME).dylib.sha1
-osx-arm64: aot-osx-arm64 $(COPY_OUTPUT)/osx-arm64/$(LIBNAME).dylib $(COPY_OUTPUT)/osx-arm64/$(LIBNAME).dylib.sha1
+win-x64: $(COPY_OUTPUT)/win-x64/$(LIBNAME).dll
+win-arm64: $(COPY_OUTPUT)/win-arm64/$(LIBNAME).dll
+linux-x64: $(COPY_OUTPUT)/linux-x64/$(LIBNAME).so
+linux-arm64: $(COPY_OUTPUT)/linux-arm64/$(LIBNAME).so
+osx-x64: $(COPY_OUTPUT)/osx-x64/$(LIBNAME).dylib
+osx-arm64: $(COPY_OUTPUT)/osx-arm64/$(LIBNAME).dylib
 
-# Copy
-COPY_TARGET := $(foreach rid,$(RID),$(COPY_OUTPUT)/$(rid)/$(LIBNAME).$(call rid_ext_$(rid)))
+# All targets
+# Windows
+$(COPY_OUTPUT)/win-x64/$(LIBNAME).dll: $(SLN)/bin/$(DOTNET_CONFIGURATION)/$(DOTNET_VERSION)/win-x64/native/$(LIBNAME).dll
+	mkdir -p $(COPY_OUTPUT)/win-x64
+	cp $(SLN)/bin/$(DOTNET_CONFIGURATION)/$(DOTNET_VERSION)/win-x64/native/$(LIBNAME).dll $(COPY_OUTPUT)/win-x64/$(LIBNAME).dll
+	shasum $(COPY_OUTPUT)/win-x64/$(LIBNAME).dll > $(COPY_OUTPUT)/win-x64/$(LIBNAME).dll.sha1
 
-extract_filename_from_copy_target = \
-	$(patsubst x64/%,%,\
-	$(patsubst arm64/%,%,\
-	$(patsubst $(COPY_OUTPUT)/win-%,%,\
-	$(patsubst $(COPY_OUTPUT)/linux-%,%,\
-	$(patsubst $(COPY_OUTPUT)/osx-%,%,\
-	$(1))))))
-extract_rid_from_copy_target = \
-	$(patsubst $(COPY_OUTPUT)/%,%,\
-	$(patsubst %/$(LIBNAME).dll,%,\
-	$(patsubst %/$(LIBNAME).so,%,\
-	$(patsubst %/$(LIBNAME).dylib,%,\
-	$(1)))))
+$(COPY_OUTPUT)/win-arm64/$(LIBNAME).dll: $(SLN)/bin/$(DOTNET_CONFIGURATION)/$(DOTNET_VERSION)/win-arm64/native/$(LIBNAME).dll
+	mkdir -p $(COPY_OUTPUT)/win-arm64
+	cp $(SLN)/bin/$(DOTNET_CONFIGURATION)/$(DOTNET_VERSION)/win-arm64/native/$(LIBNAME).dll $(COPY_OUTPUT)/win-arm64/$(LIBNAME).dll
+	shasum $(COPY_OUTPUT)/win-arm64/$(LIBNAME).dll > $(COPY_OUTPUT)/win-arm64/$(LIBNAME).dll.sha1
 
-$(COPY_TARGET):
-	mkdir -p $(COPY_OUTPUT)/$(call extract_rid_from_copy_target,$@)
-	cp $(SLN)/bin/$(DOTNET_CONFIGURATION)/$(DOTNET_VERSION)/$(call extract_rid_from_copy_target,$@)/native/$(call extract_filename_from_copy_target,$@) $@
+# Linux
+$(COPY_OUTPUT)/linux-x64/$(LIBNAME).so: $(SLN)/bin/$(DOTNET_CONFIGURATION)/$(DOTNET_VERSION)/linux-x64/native/$(LIBNAME).so
+	mkdir -p $(COPY_OUTPUT)/linux-x64
+	cp $(SLN)/bin/$(DOTNET_CONFIGURATION)/$(DOTNET_VERSION)/linux-x64/native/$(LIBNAME).so $(COPY_OUTPUT)/linux-x64/$(LIBNAME).so
+	shasum $(COPY_OUTPUT)/linux-x64/$(LIBNAME).so > $(COPY_OUTPUT)/linux-x64/$(LIBNAME).so.sha1
 
-$(foreach f,$(COPY_TARGET),$(f).sha1):
-	shasum $(patsubst %.sha1,%,$@) > $@
+$(COPY_OUTPUT)/linux-arm64/$(LIBNAME).so: $(SLN)/bin/$(DOTNET_CONFIGURATION)/$(DOTNET_VERSION)/linux-arm64/native/$(LIBNAME).so
+	mkdir -p $(COPY_OUTPUT)/linux-arm64
+	cp $(SLN)/bin/$(DOTNET_CONFIGURATION)/$(DOTNET_VERSION)/linux-arm64/native/$(LIBNAME).so $(COPY_OUTPUT)/linux-arm64/$(LIBNAME).so
+	shasum $(COPY_OUTPUT)/linux-arm64/$(LIBNAME).so > $(COPY_OUTPUT)/linux-arm64/$(LIBNAME).so.sha1
 
-# PublishAOT
+# Mac OS X
+$(COPY_OUTPUT)/osx-x64/$(LIBNAME).dylib: $(SLN)/bin/$(DOTNET_CONFIGURATION)/$(DOTNET_VERSION)/osx-x64/native/$(LIBNAME).dylib
+	mkdir -p $(COPY_OUTPUT)/osx-x64
+	cp $(SLN)/bin/$(DOTNET_CONFIGURATION)/$(DOTNET_VERSION)/osx-x64/native/$(LIBNAME).dylib $(COPY_OUTPUT)/osx-x64/$(LIBNAME).dylib
+	shasum $(COPY_OUTPUT)/osx-x64/$(LIBNAME).dylib > $(COPY_OUTPUT)/osx-x64/$(LIBNAME).dylib.sha1
+
+$(COPY_OUTPUT)/osx-arm64/$(LIBNAME).dylib: $(SLN)/bin/$(DOTNET_CONFIGURATION)/$(DOTNET_VERSION)/osx-arm64/native/$(LIBNAME).dylib
+	mkdir -p $(COPY_OUTPUT)/osx-arm64
+	cp $(SLN)/bin/$(DOTNET_CONFIGURATION)/$(DOTNET_VERSION)/osx-arm64/native/$(LIBNAME).dylib $(COPY_OUTPUT)/osx-arm64/$(LIBNAME).dylib
+	shasum $(COPY_OUTPUT)/osx-arm64/$(LIBNAME).dylib > $(COPY_OUTPUT)/osx-arm64/$(LIBNAME).dylib.sha1
+
+# PublishAOT (all 3 platforms)
 AOT_TARGET := $(foreach rid,$(RID),$(SLN)/bin/$(DOTNET_CONFIGURATION)/$(DOTNET_VERSION)/$(rid)/native/$(LIBNAME).$(call rid_ext_$(rid)))
-
-aot-win-x64: $(SLN)/bin/$(DOTNET_CONFIGURATION)/$(DOTNET_VERSION)/win-x64/native/$(LIBNAME).dll
-aot-win-arm64: $(SLN)/bin/$(DOTNET_CONFIGURATION)/$(DOTNET_VERSION)/win-arm64/native/$(LIBNAME).dll
-aot-linux-x64: $(SLN)/bin/$(DOTNET_CONFIGURATION)/$(DOTNET_VERSION)/linux-x64/native/$(LIBNAME).so
-aot-linux-arm64: $(SLN)/bin/$(DOTNET_CONFIGURATION)/$(DOTNET_VERSION)/linux-arm64/native/$(LIBNAME).so
-aot-osx-x64: $(SLN)/bin/$(DOTNET_CONFIGURATION)/$(DOTNET_VERSION)/osx-x64/native/$(LIBNAME).dylib
-aot-osx-arm64: $(SLN)/bin/$(DOTNET_CONFIGURATION)/$(DOTNET_VERSION)/osx-arm64/native/$(LIBNAME).dylib
 
 extract_rid_from_aot_target = \
 	$(patsubst $(SLN)/bin/$(DOTNET_CONFIGURATION)/$(DOTNET_VERSION)/%/native/$(LIBNAME).dll,%,\
