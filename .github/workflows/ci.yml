@@ -1,0 +1,27 @@
+name: Inking CI (all platforms)
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  linux-natives:
+    name: Linux Natives
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8
+          dotnet-quality: ga
+      - name: Install GCC toolchains
+        run: |
+          apt update && apt upgrade
+          apt install gcc gcc-aarch64-linux-gnu
+      - name: Build NativeAOT with GNU Make (Linux x64, Linux arm64)
+        run: make linux-x64 linux-arm64
+        working-directory: inking-otd
+      - uses: actions/upload-artifact@v4
+        with:
+          name: linux-natives
+          path: inking-otd/src/main/resources/natives/**/*
