@@ -88,7 +88,7 @@ $(COPY_TARGET):
 	cp $(SLN)/bin/$(DOTNET_CONFIGURATION)/$(DOTNET_VERSION)/$(call extract_rid_from_copy_target,$@)/native/$(call extract_filename_from_copy_target,$@) $@
 
 $(foreach f,$(COPY_TARGET),$(f).sha1):
-	sha1sum $(patsubst %.sha1,%,$@) > $@
+	shasum $(patsubst %.sha1,%,$@) > $@
 
 # PublishAOT
 AOT_TARGET := $(foreach rid,$(RID),$(SLN)/bin/$(DOTNET_CONFIGURATION)/$(DOTNET_VERSION)/$(rid)/native/$(LIBNAME).$(call rid_ext_$(rid)))
