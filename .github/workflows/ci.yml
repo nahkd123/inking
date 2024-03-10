@@ -20,7 +20,7 @@ jobs:
           packages: make perl-Digest-SHA
       - name: Build NativeAOT with GNU Make (Windows x64, Windows arm64)
         shell: bash
-        run: make win-x64 win-arm64
+        run: make -j win-x64 win-arm64
         working-directory: inking-otd
       - uses: actions/upload-artifact@v4
         with:
@@ -54,7 +54,7 @@ jobs:
           sudo apt update
           sudo apt install -y clang llvm binutils-aarch64-linux-gnu gcc-aarch64-linux-gnu zlib1g-dev:arm64
       - name: Build NativeAOT with GNU Make (Linux x64, Linux arm64)
-        run: make linux-x64 linux-arm64
+        run: make -j linux-x64 linux-arm64
         working-directory: inking-otd
       - uses: actions/upload-artifact@v4
         with:
@@ -71,7 +71,7 @@ jobs:
           dotnet-version: 8
           dotnet-quality: ga
       - name: Build NativeAOT with GNU Make (OSX x64, OSX arm64)
-        run: make osx-x64 osx-arm64
+        run: make -j osx-x64 osx-arm64
         working-directory: inking-otd
       - uses: actions/upload-artifact@v4
         with:
