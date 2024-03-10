@@ -57,7 +57,7 @@ public class OtdNative {
 	public static OtdNative findNative(Path copyDest, Linker linker, Arena arena) {
 		ClassLoader clsLoader = OtdNative.class.getClassLoader();
 		SymbolLookup lib = PlatformUtils.loadLibrary("Inking.Otd", clsLoader, copyDest, arena);
-		return new OtdNative(linker, lib, arena);
+		return lib != null ? new OtdNative(linker, lib, arena) : null;
 	}
 
 	protected static AddressLayout stringLayout() {
