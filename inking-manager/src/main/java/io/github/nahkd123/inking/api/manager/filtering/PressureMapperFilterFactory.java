@@ -14,12 +14,12 @@ import io.github.nahkd123.inking.api.tablet.Packet;
 public class PressureMapperFilterFactory implements FilterFactory<PressureMapper> {
 	public static class PressureMapper implements TabletFilter<PressureMapper> {
 		private PressureMapperFilterFactory factory;
-		private boolean enable;
+		private boolean enabled;
 		private MappingGraph graph;
 
-		public PressureMapper(PressureMapperFilterFactory factory, boolean enable, MappingGraph graph) {
+		public PressureMapper(PressureMapperFilterFactory factory, boolean enabled, MappingGraph graph) {
 			this.factory = factory;
-			this.enable = enable;
+			this.enabled = enabled;
 			this.graph = graph;
 		}
 
@@ -28,7 +28,7 @@ public class PressureMapperFilterFactory implements FilterFactory<PressureMapper
 
 		@Override
 		public void filterPacket(Packet packet, Consumer<Packet> pusher, FilterHost host) {
-			if (!enable) {
+			if (!enabled) {
 				pusher.accept(packet);
 				return;
 			}
@@ -56,8 +56,8 @@ public class PressureMapperFilterFactory implements FilterFactory<PressureMapper
 				boolean.class,
 				"Enable",
 				"Enable to map pressure. Disable for passthrough.",
-				() -> filter.enable,
-				s -> filter.enable = s),
+				() -> filter.enabled,
+				s -> filter.enabled = s),
 			new ConfigurableValue<>(
 				MappingGraph.class,
 				"Pressure Mapping",

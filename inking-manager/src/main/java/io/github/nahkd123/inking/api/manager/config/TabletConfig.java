@@ -18,12 +18,14 @@ import io.github.nahkd123.inking.api.util.MeasurementUnit;
 public class TabletConfig {
 	private String tabletId;
 	private TabletInfo info;
+	private boolean enabled;
 	private AreaConfig areaConfig;
 	private FiltersList filters;
 
-	public TabletConfig(String tabletId, TabletInfo info, AreaConfig areaConfig, FiltersList filters) {
+	public TabletConfig(String tabletId, TabletInfo info, boolean enabled, AreaConfig areaConfig, FiltersList filters) {
 		this.tabletId = tabletId;
 		this.info = info;
+		this.enabled = enabled;
 		this.areaConfig = areaConfig;
 		this.filters = filters;
 	}
@@ -32,11 +34,17 @@ public class TabletConfig {
 
 	public TabletInfo getInfo() { return info; }
 
+	public boolean isEnabled() { return enabled; }
+
+	public void setEnabled(boolean enabled) { this.enabled = enabled; }
+
 	public Optional<AreaConfig> getAreaConfig() { return Optional.ofNullable(areaConfig); }
 
 	public FiltersList getFilters() { return filters; }
 
 	public void filter(Packet packet, FilterHost host, Consumer<Packet> callback) {
+		if (!enabled) return;
+
 		List<Packet> packets = new ArrayList<>();
 		filters.filter(packet, host, packets::add);
 
@@ -55,6 +63,6 @@ public class TabletConfig {
 		AreaConfig areaConfig = info.getInputSize()
 			.map(size -> new AreaConfig(new Rectangle(0, 0, size.x(), size.y(), MeasurementUnit.UNITLESS), true))
 			.orElse(null);
-		return new TabletConfig(tablet.getTabletId(), info, areaConfig, new FiltersList());
+		return new TabletConfig(tablet.getTabletId(), info, true, areaConfig, new FiltersList());
 	}
 }
