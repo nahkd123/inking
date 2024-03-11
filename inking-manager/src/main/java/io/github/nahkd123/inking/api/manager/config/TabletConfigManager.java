@@ -4,6 +4,13 @@ import java.util.List;
 
 import io.github.nahkd123.inking.api.tablet.Tablet;
 
+/**
+ * <p>
+ * This is the manager to manage all user's configurations. When initializing
+ * the manager, the implementation must load all configurations in the storage,
+ * including disconnected device (but have configuration locally).
+ * </p>
+ */
 public interface TabletConfigManager {
 	/**
 	 * <p>
@@ -34,8 +41,7 @@ public interface TabletConfigManager {
 
 	/**
 	 * <p>
-	 * Get all tablet configurations, including configurations that haven't loaded
-	 * yet.
+	 * Get all tablet configurations, including disconnected devices.
 	 * </p>
 	 * 
 	 * @return List of all configurations.

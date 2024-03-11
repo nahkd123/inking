@@ -4,8 +4,24 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import io.github.nahkd123.inking.api.manager.config.Configurable;
+import io.github.nahkd123.inking.api.tablet.MutablePacket;
 import io.github.nahkd123.inking.api.tablet.Packet;
 
+/**
+ * <p>
+ * Tablet filters allows user to apply effects/filters to the tablet's packets
+ * stream. The filter can cancel the packet, modify the packet or generate new
+ * packets based on historical data.
+ * </p>
+ * <p>
+ * <b>Modifications to a single packet</b>: Use
+ * {@link MutablePacket#mutableOf(Packet)} for better memory usage. This will
+ * returns a new {@link MutablePacket} if the packet is not mutable, or returns
+ * the value from parameter if it is mutable.
+ * </p>
+ * 
+ * @param <T> The filter type.
+ */
 public interface TabletFilter<T extends TabletFilter<T>> {
 	public FilterFactory<T> getFactory();
 
