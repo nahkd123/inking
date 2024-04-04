@@ -34,6 +34,18 @@
 					<enablePreview>true</enablePreview>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>io.github.nahkd123</groupId>
+				<artifactId>inking-maven-plugin</artifactId>
+				<version>0.0.1-SNAPSHOT</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>strip-preview-flags</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 </project>

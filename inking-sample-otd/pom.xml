@@ -37,7 +37,19 @@
 				<configuration>
 					<filters>
 						<filter>
-							<artifact>io.github.nahkd123:*</artifact>
+							<artifact>io.github.nahkd123:inking-api</artifact>
+							<excludes>
+								<exclude>META-INF/MANIFEST.MF</exclude>
+							</excludes>
+						</filter>
+						<filter>
+							<artifact>io.github.nahkd123:inking-internal-java21</artifact>
+							<excludes>
+								<exclude>META-INF/MANIFEST.MF</exclude>
+							</excludes>
+						</filter>
+						<filter>
+							<artifact>io.github.nahkd123:inking-otd</artifact>
 							<excludes>
 								<exclude>META-INF/MANIFEST.MF</exclude>
 							</excludes>
@@ -60,7 +72,6 @@
 				</configuration>
 				<executions>
 					<execution>
-						<phase>package</phase>
 						<goals>
 							<goal>shade</goal>
 						</goals>
@@ -78,6 +89,18 @@
 						</manifest>
 					</archive>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>io.github.nahkd123</groupId>
+				<artifactId>inking-maven-plugin</artifactId>
+				<version>0.0.1-SNAPSHOT</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>strip-preview-flags</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

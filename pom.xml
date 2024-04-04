@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -24,6 +25,7 @@
 		<module>inking-internal-java21</module>
 		<module>inking-otd</module>
 		<module>inking-sample-otd</module>
+		<module>inking-maven-plugin</module>
 	</modules>
 	<dependencyManagement>
 		<dependencies>
@@ -45,6 +47,11 @@
 			<dependency>
 				<groupId>io.github.nahkd123</groupId>
 				<artifactId>inking-otd</artifactId>
+				<version>0.0.1-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>io.github.nahkd123</groupId>
+				<artifactId>inking-maven-plugin</artifactId>
 				<version>0.0.1-SNAPSHOT</version>
 			</dependency>
 			<dependency>
