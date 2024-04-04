@@ -118,7 +118,7 @@ lib.CallMe((packet) -> {
 
 When `myStaticField.EventHandler` from .NET calls the handler in quick succession, the Java code still prints `Hey!` to console. However, after a unspecified amount of calls to the callback, the JVM side stops printing, while the .NET side stills printing `C#: Hey!`. I'd love to make a reproducible repository and report that to JNA developers, but right now I'm so tired after spending time to get JNA working with my OTD bridge.
 
-I have to use [Foreign Function & Memory API](https://openjdk.org/jeps/454) from Java 21 preview feature, which means you'll have to add `--enable-preview` in the command-line arguments. Unfortunately, Minecraft hasn't moved to Java 21 yet, so people adopting Inking is likely going to be way less.
+I have to use [Foreign Function & Memory API](https://openjdk.org/jeps/454) from Java 21 preview feature, which means you'll have to add `--enable-preview` in the command-line arguments. Unfortunately, ~~Minecraft hasn't moved to Java 21 yet, so people adopting Inking is likely going to be way less~~ Minecraft 24w14a just updated to Java 21 and deprecated 32-bit system. Very exciting.
 
 ## License
 MIT License. See [LICENSE](./LICENSE) for notices.
