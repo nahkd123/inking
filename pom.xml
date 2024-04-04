@@ -6,6 +6,12 @@
 	<artifactId>inking</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>Inking</name>
+	<licenses>
+		<license>
+			<name>MIT License</name>
+			<url>https://raw.githubusercontent.com/nahkd123/inking/main/LICENSE</url>
+		</license>
+	</licenses>
 	<properties>
 		<maven.compiler.source>17</maven.compiler.source>
 		<maven.compiler.target>17</maven.compiler.target>

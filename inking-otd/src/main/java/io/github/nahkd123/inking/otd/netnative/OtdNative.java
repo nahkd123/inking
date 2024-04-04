@@ -14,9 +14,15 @@ import java.lang.invoke.MethodType;
 import java.nio.file.Path;
 import java.util.function.BiConsumer;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import io.github.nahkd123.inking.internal.PlatformUtils;
+import io.github.nahkd123.inking.otd.internal.SimpleLoggerAdapter;
 
 public class OtdNative {
+	private static final Logger LOGGER = LoggerFactory.getLogger("Inking/OpenTabletDriver/NativeLoader");
+
 	private Linker linker;
 	private SymbolLookup lib;
 
@@ -49,14 +55,17 @@ public class OtdNative {
 	 * attempts to copy native library from JAR file to a directory.
 	 * </p>
 	 * 
-	 * @param copyDest Copy destination.
-	 * @param linker   The native linker.
-	 * @param arena    The arena.
+	 * @param copyDest       Copy destination.
+	 * @param linker         The native linker.
+	 * @param arena          The arena.
+	 * @param ignoreChecksum Ignore checksum, allowing user to use their own native
+	 *                       library.
 	 * @return The library, or {@code null} if no suitable library can be found.
 	 */
-	public static OtdNative findNative(Path copyDest, Linker linker, Arena arena) {
+	public static OtdNative findNative(Path copyDest, Linker linker, Arena arena, boolean ignoreChecksum) {
 		ClassLoader clsLoader = OtdNative.class.getClassLoader();
-		SymbolLookup lib = PlatformUtils.loadLibrary("Inking.Otd", clsLoader, copyDest, arena);
+		SymbolLookup lib = PlatformUtils.loadLibrary("Inking.Otd", clsLoader, copyDest, arena,
+			new SimpleLoggerAdapter(LOGGER), ignoreChecksum);
 		return lib != null ? new OtdNative(linker, lib, arena) : null;
 	}
 

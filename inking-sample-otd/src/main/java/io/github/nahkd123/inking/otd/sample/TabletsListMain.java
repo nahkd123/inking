@@ -20,7 +20,7 @@ public class TabletsListMain {
 		Path nativeLibPath = Files.createTempDirectory("inking-sample-otd");
 		Linker linker = Linker.nativeLinker();
 		Arena arena = Arena.ofAuto();
-		TabletDriver driver = new OpenTabletDriver(OtdNative.findNative(nativeLibPath, linker, arena));
+		TabletDriver driver = new OpenTabletDriver(OtdNative.findNative(nativeLibPath, linker, arena, false));
 
 		// Wait for driver to collect all tablets
 		Thread.sleep(1000);

@@ -27,7 +27,7 @@ public class TabletPollingRateMain {
 		Path nativeLibPath = Files.createTempDirectory("inking-sample-otd");
 		Linker linker = Linker.nativeLinker();
 		Arena arena = Arena.ofAuto();
-		TabletDriver driver = new OpenTabletDriver(OtdNative.findNative(nativeLibPath, linker, arena));
+		TabletDriver driver = new OpenTabletDriver(OtdNative.findNative(nativeLibPath, linker, arena, false));
 		Map<String, Long> counter = new HashMap<>();
 		Map<String, List<Long>> history = new HashMap<>();
 

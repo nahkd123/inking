@@ -20,7 +20,7 @@ public class TabletPacketMain {
 		Path nativeLibPath = Files.createTempDirectory("inking-sample-otd");
 		Linker linker = Linker.nativeLinker();
 		Arena arena = Arena.ofAuto();
-		TabletDriver driver = new OpenTabletDriver(OtdNative.findNative(nativeLibPath, linker, arena));
+		TabletDriver driver = new OpenTabletDriver(OtdNative.findNative(nativeLibPath, linker, arena, false));
 
 		driver.getTabletDiscoverEmitter().listen(tablet -> {
 			TabletInfo spec = tablet.getInfo();
