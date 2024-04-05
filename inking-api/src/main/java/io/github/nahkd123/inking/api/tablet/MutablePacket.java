@@ -39,7 +39,8 @@ public class MutablePacket implements Packet {
 	 * </p>
 	 * <p>
 	 * Mutable packets should be used in filters to minimize memory usage, because a
-	 * professional graphics tablet can emit up to 1000 packets per second (1000Hz).
+	 * professional graphics tablet can emit up to 1000 packets per second (1000Hz),
+	 * and we certainly do not want to allocate +10,000 objects per second.
 	 * </p>
 	 * 
 	 * @param packet The packet.
@@ -48,6 +49,18 @@ public class MutablePacket implements Packet {
 	 */
 	public static MutablePacket mutableOf(Packet packet) {
 		if (packet instanceof MutablePacket mutable) return mutable;
+		return copyFrom(packet);
+	}
+
+	/**
+	 * <p>
+	 * Create a new mutable copy of given packet.
+	 * </p>
+	 * 
+	 * @param packet The packet.
+	 * @return A new mutable copy of the packet.
+	 */
+	public static MutablePacket copyFrom(Packet packet) {
 		Vector2 penPosition = packet.getPenPosition();
 		Vector2 penTilt = packet.getTilt();
 		int rawPressure = packet.getRawPressure();

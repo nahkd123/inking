@@ -19,12 +19,14 @@ public record Vector2(double x, double y, MeasurementUnit unit) {
 		this(x, y, MeasurementUnit.UNITLESS);
 	}
 
-	public Vector2(double v, MeasurementUnit unit) {
-		this(v, 0, unit);
-	}
-
 	public Vector2(MeasurementUnit unit) {
 		this(0, 0, unit);
+	}
+
+	public static Vector2 from(ValueUnit x, ValueUnit y) {
+		if (x.unit() != y.unit())
+			throw new IllegalArgumentException("Measurement unit mismatch: " + x.unit() + " !=" + y.unit());
+		return new Vector2(x.value(), y.value(), x.unit());
 	}
 
 	public Vector2 withUnit(MeasurementUnit to) {
@@ -37,11 +39,19 @@ public record Vector2(double x, double y, MeasurementUnit unit) {
 		}
 
 		if (unit == MeasurementUnit.DEGREE && to == MeasurementUnit.RADIAN)
-			return new Vector2(Math.toRadians(x), Math.toRadians(y));
+			return new Vector2(Math.toRadians(x), Math.toRadians(y), to);
 		if (unit == MeasurementUnit.RADIAN && to == MeasurementUnit.DEGREE)
-			return new Vector2(Math.toDegrees(x), Math.toDegrees(y));
+			return new Vector2(Math.toDegrees(x), Math.toDegrees(y), to);
 
 		throw new UnsupportedOperationException("Can't convert from " + unit.getFullName() + " to " + to.getFullName());
+	}
+
+	public ValueUnit xUnit() {
+		return new ValueUnit(x, unit);
+	}
+
+	public ValueUnit yUnit() {
+		return new ValueUnit(y, unit);
 	}
 
 	@Override

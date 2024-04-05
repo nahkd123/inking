@@ -2,7 +2,7 @@ package io.github.nahkd123.inking.otd.internal;
 
 import org.slf4j.Logger;
 
-import io.github.nahkd123.inking.internal.SimpleLogger;
+import io.github.nahkd123.inking.api.util.SimpleLogger;
 
 public class SimpleLoggerAdapter implements SimpleLogger {
 	private Logger logger;

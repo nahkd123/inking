@@ -11,7 +11,6 @@ import io.github.nahkd123.inking.api.util.MeasurementUnit;
 import io.github.nahkd123.inking.api.util.Vector2;
 
 public class OtdPacket implements Packet {
-	private long timestamp;
 	private Flags states;
 	private Vector2 position;
 	private Vector2 tilt;
@@ -19,6 +18,7 @@ public class OtdPacket implements Packet {
 	private int hoverDistance;
 	private long penButtons;
 	private long auxButtons;
+	private long timestamp;
 
 	/**
 	 * <p>

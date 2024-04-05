@@ -11,12 +11,14 @@ public enum MeasurementUnit {
 
 	private String fullName;
 	private String unitName;
+	private String[] possibleSuffixes;
 	private MeasurementUnit baseUnit;
 	private double baseScale;
 
 	private MeasurementUnit(String fullName, String unitName, MeasurementUnit baseUnit, double baseScale) {
 		this.fullName = fullName;
 		this.unitName = unitName;
+		this.possibleSuffixes = new String[] { fullName, fullName.toLowerCase(), unitName, unitName.toUpperCase() };
 		this.baseUnit = baseUnit;
 		this.baseScale = baseScale;
 	}
@@ -24,6 +26,8 @@ public enum MeasurementUnit {
 	public String getFullName() { return fullName; }
 
 	public String getUnitName() { return unitName; }
+
+	public String[] getPossibleSuffixes() { return possibleSuffixes; }
 
 	public MeasurementUnit getBaseUnit() { return baseUnit != null ? baseUnit : this; }
 

@@ -34,7 +34,8 @@ public class TabletPacketMain {
 					+ ": Input " + packet.getPenPosition()
 					+ " Pressure " + (packet.getRawPressure() * 100 / spec.getMaxPressure()) + "%"
 					+ " Tilt " + packet.getTilt()
-					+ " Hovering " + packet.getRawHoverDistance());
+					+ " Hovering " + packet.getRawHoverDistance()
+					+ " Timestamp " + packet.getTimestamp());
 			});
 		});
 

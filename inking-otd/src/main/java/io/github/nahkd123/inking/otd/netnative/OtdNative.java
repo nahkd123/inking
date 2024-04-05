@@ -69,6 +69,23 @@ public class OtdNative {
 		return lib != null ? new OtdNative(linker, lib, arena) : null;
 	}
 
+	/**
+	 * <p>
+	 * Find native library, load it as {@link OtdNative}. Basically
+	 * {@link #findNative(Path, Linker, Arena, boolean)}, but for applications that
+	 * doesn't want to enable preview features. This will use native linker +
+	 * {@link Arena#ofAuto()}.
+	 * </p>
+	 * 
+	 * @param copyDest       Copy destination.
+	 * @param ignoreChecksum Ignore checksum, allowing user to use their own native
+	 *                       library.
+	 * @return The library, or {@code null} if no suitable library can be found.
+	 */
+	public static OtdNative findNative(Path copyDest, boolean ignoreChecksum) {
+		return findNative(copyDest, Linker.nativeLinker(), Arena.ofAuto(), ignoreChecksum);
+	}
+
 	protected static AddressLayout stringLayout() {
 		return ValueLayout.ADDRESS.withTargetLayout(MemoryLayout.sequenceLayout(ValueLayout.JAVA_BYTE));
 	}

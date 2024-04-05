@@ -11,6 +11,19 @@ import io.github.nahkd123.inking.api.util.Vector2;
  * keep things simple, all common graphics tablet inputs are included in this
  * one packet interface.
  * </p>
+ * <p>
+ * A packet is a snapshot of the tablet's state, captured at given time
+ * ({@link #getTimestamp()}). Tablet's states includes: pen position (on the
+ * sensing area), raw pressure, tilt and more.
+ * </p>
+ * 
+ * @see #getPenPosition()
+ * @see #getRawPressure()
+ * @see #getTilt()
+ * @see #isButtonDown(ButtonType, int)
+ * @see #getTimestamp()
+ * @see MutablePacket
+ * @see ImmutablePacket
  */
 public interface Packet {
 	/**
@@ -32,6 +45,9 @@ public interface Packet {
 	 * <p>
 	 * If the unit is {@link MeasurementUnit#PIXEL}, the pen's position is relative
 	 * to the current window (depending on how the tablet object was created).
+	 * Tablet mapper that maps pen's physical/input position to application's window
+	 * must ignore the pen's position if {@link MeasurementUnit#PIXEL} is reported,
+	 * or set the pointer at exact pixel in the window.
 	 * </p>
 	 * 
 	 * @return The pen position.
@@ -108,6 +124,19 @@ public interface Packet {
 		return 0L;
 	}
 
+	/**
+	 * <p>
+	 * Check if the button at given index is being held down since this packet is
+	 * captured.
+	 * </p>
+	 * 
+	 * @param type  The button type. {@link ButtonType#AUXILIARY} indicates the
+	 *              buttons on the tablet, while {@link ButtonType#PEN} indicates
+	 *              the buttons on the pen.
+	 * @param index The index of the button, starting from {@code 0}. Button #1 is
+	 *              index 0, button #2 is index 1 and so on.
+	 * @return {@code true} if the button is being held down.
+	 */
 	default boolean isButtonDown(ButtonType type, int index) {
 		return (getButtonsDown(type) & (1L << index)) != 0L;
 	}

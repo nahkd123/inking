@@ -54,11 +54,8 @@ public interface TabletDriver {
 	 * <p>
 	 * Get the emitter that emits when a new tablet is discovered by this driver. A
 	 * tablet is considered to be discovered when it's unique identifier hasn't been
-	 * seen before by the driver. Even if the tablet is disconnected, the tablet
-	 * emitted from this emitter can still be used.
-	 * </p>
-	 * <p>
-	 * This will only emits when an undiscovered tablet connected to the computer.
+	 * seen before by the driver. In other words, this will only emits when a
+	 * previously undiscovered tablet connected to the computer.
 	 * </p>
 	 * 
 	 * @return Emitter.

@@ -18,6 +18,12 @@
 		<maven.compiler.target>17</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
+	<repositories>
+		<repository>
+			<id>minecraft</id>
+			<url>https://libraries.minecraft.net/</url>
+		</repository>
+	</repositories>
 	<packaging>pom</packaging>
 	<modules>
 		<module>inking-api</module>
@@ -55,14 +61,9 @@
 				<version>0.0.1-SNAPSHOT</version>
 			</dependency>
 			<dependency>
-				<groupId>net.java.dev.jna</groupId>
-				<artifactId>jna</artifactId>
-				<version>5.13.0</version>
-			</dependency>
-			<dependency>
-				<groupId>net.java.dev.jna</groupId>
-				<artifactId>jna-platform</artifactId>
-				<version>5.13.0</version>
+				<groupId>com.mojang</groupId>
+				<artifactId>datafixerupper</artifactId>
+				<version>6.0.8</version>
 			</dependency>
 			<dependency>
 				<groupId>org.slf4j</groupId>

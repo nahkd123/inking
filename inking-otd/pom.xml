@@ -8,7 +8,7 @@
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 	<artifactId>inking-otd</artifactId>
-	<name>Inking (OpenTabletDriver implementation)</name>
+	<name>Inking (OpenTabletDriver bridge)</name>
 	<dependencies>
 		<dependency>
 			<groupId>io.github.nahkd123</groupId>
