@@ -1,38 +1,29 @@
 package io.github.nahkd123.inking.api.manager.config;
 
-import java.util.List;
+import java.util.Map;
 
 import io.github.nahkd123.inking.api.tablet.Tablet;
 
-/**
- * <p>
- * This is the manager to manage all user's configurations. When initializing
- * the manager, the implementation must load all configurations in the storage,
- * including disconnected device (but have configuration locally).
- * </p>
- */
 public interface TabletConfigManager {
 	/**
 	 * <p>
-	 * Get (or create default) tablet configuration from given tablet handle. The
-	 * default tablet configuration can be obtained by using
-	 * {@link TabletConfig#createDefault(Tablet)}.
+	 * Get (or create) tablet configuration from given tablet. By default,
+	 * configurations created from this method will not be saved. Use
+	 * {@link #save(TabletConfig)} to save the configuration.
 	 * </p>
 	 * <p>
-	 * Modifications to the {@link TabletConfig} and its children (eg:
-	 * {@link AreaConfig}) will be applied immediately across all places that uses
-	 * the same {@link TabletConfigManager}, but it will not be saved to storage. To
-	 * save configuration to storage, use {@link #save(TabletConfig)}.
+	 * Modifications on {@link TabletConfig} applies globally, but it must be saved
+	 * if you want to load your modifications next time the application is loaded.
 	 * </p>
 	 * 
-	 * @param tablet The tablet handle.
-	 * @return New or existing tablet configuration.
+	 * @param tablet The tablet.
+	 * @return The tablet configuration.
 	 */
 	public TabletConfig get(Tablet tablet);
 
 	/**
 	 * <p>
-	 * Save the configuration to storage.
+	 * Save the tablet configuration.
 	 * </p>
 	 * 
 	 * @param config The tablet configuration.
@@ -41,10 +32,11 @@ public interface TabletConfigManager {
 
 	/**
 	 * <p>
-	 * Get all tablet configurations, including disconnected devices.
+	 * Get all configurations from this manager. The returned map is not modifiable.
 	 * </p>
 	 * 
-	 * @return List of all configurations.
+	 * @return All configurations, with keys for tablet ID and values for
+	 *         configurations.
 	 */
-	public List<TabletConfig> getAll();
+	public Map<String, TabletConfig> getAllConfig();
 }

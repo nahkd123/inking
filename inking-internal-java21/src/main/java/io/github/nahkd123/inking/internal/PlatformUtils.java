@@ -13,6 +13,8 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
+import io.github.nahkd123.inking.api.util.SimpleLogger;
+
 public class PlatformUtils {
 	private static final String HEX = "0123456789abcdef";
 
@@ -97,8 +99,10 @@ public class PlatformUtils {
 				boolean valid = Arrays.equals(hash, digested);
 				doCopy = !valid;
 
-				if (!valid && logger != null)
-					logger.error(nativePath + ": Invalid SHA-1 hash, copying new file...");
+				if (!valid) {
+					if (logger != null) logger.error(nativePath + ": Invalid SHA-1 hash, copying new file...");
+					Files.deleteIfExists(nativePath);
+				}
 			} catch (IOException e) {
 				e.printStackTrace();
 				if (logger != null) logger.warning(nativePath + ": Can't open for checksum, copying new file anyways.");

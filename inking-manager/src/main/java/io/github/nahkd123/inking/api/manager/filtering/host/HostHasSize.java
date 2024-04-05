@@ -1,4 +1,4 @@
-package io.github.nahkd123.inking.api.manager.filtering;
+package io.github.nahkd123.inking.api.manager.filtering.host;
 
 import io.github.nahkd123.inking.api.tablet.Packet;
 import io.github.nahkd123.inking.api.util.MeasurementUnit;

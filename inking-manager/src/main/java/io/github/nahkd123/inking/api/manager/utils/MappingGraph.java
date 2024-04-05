@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
+
 /**
  * <p>
  * Mapping graph maps the input values to a curve. Mainly for pen pressure
@@ -13,6 +16,21 @@ import java.util.List;
 public class MappingGraph {
 	private static final Dot ZERO = new Dot(0, 0);
 	private List<Dot> dots = new ArrayList<>();
+
+	private static final Codec<Dot> DOT_CODEC = Codec.INT.listOf().comapFlatMap(
+		list -> {
+			if (list.size() != 2) return DataResult.error(() -> "The graph point must be a list of 2 elements");
+			return DataResult.success(new Dot(list.get(0), list.get(1)));
+		},
+		dot -> List.of(dot.x, dot.y));
+
+	public static final Codec<MappingGraph> CODEC = DOT_CODEC.listOf().xmap(
+		list -> {
+			MappingGraph graph = new MappingGraph();
+			list.forEach(l -> graph.add(l.x, l.y));
+			return graph;
+		},
+		MappingGraph::getDots);
 
 	public static class Dot implements Comparable<Dot> {
 		private int x;

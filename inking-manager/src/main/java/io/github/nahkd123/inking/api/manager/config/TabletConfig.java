@@ -1,68 +1,39 @@
 package io.github.nahkd123.inking.api.manager.config;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Consumer;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import io.github.nahkd123.inking.api.manager.filtering.FilterHost;
-import io.github.nahkd123.inking.api.manager.filtering.FiltersList;
-import io.github.nahkd123.inking.api.manager.filtering.HostHasSize;
-import io.github.nahkd123.inking.api.manager.utils.Rectangle;
-import io.github.nahkd123.inking.api.tablet.MutablePacket;
-import io.github.nahkd123.inking.api.tablet.Packet;
+import io.github.nahkd123.inking.api.manager.filtering.AreaMappingFilter;
+import io.github.nahkd123.inking.api.manager.filtering.TabletFiltersList;
 import io.github.nahkd123.inking.api.tablet.Tablet;
-import io.github.nahkd123.inking.api.tablet.TabletInfo;
-import io.github.nahkd123.inking.api.util.MeasurementUnit;
 
 public class TabletConfig {
 	private String tabletId;
-	private TabletInfo info;
-	private boolean enabled;
-	private AreaConfig areaConfig;
-	private FiltersList filters;
+	private boolean enable;
+	private TabletFiltersList filters;
 
-	public TabletConfig(String tabletId, TabletInfo info, boolean enabled, AreaConfig areaConfig, FiltersList filters) {
+	public TabletConfig(String tabletId, boolean enable, TabletFiltersList filters) {
 		this.tabletId = tabletId;
-		this.info = info;
-		this.enabled = enabled;
-		this.areaConfig = areaConfig;
+		this.enable = enable;
 		this.filters = filters;
 	}
 
+	public TabletConfig(Tablet tablet) {
+		this(tablet.getTabletId(), true, new TabletFiltersList());
+		filters.add(new AreaMappingFilter(tablet));
+	}
+
+	public static final Codec<TabletConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+		Codec.STRING.fieldOf("id").forGetter(TabletConfig::getTabletId),
+		Codec.BOOL.fieldOf("enable").forGetter(TabletConfig::isEnabled),
+		TabletFiltersList.CODEC.fieldOf("filters").forGetter(TabletConfig::getFilters))
+		.apply(instance, TabletConfig::new));
+
 	public String getTabletId() { return tabletId; }
 
-	public TabletInfo getInfo() { return info; }
+	public boolean isEnabled() { return enable; }
 
-	public boolean isEnabled() { return enabled; }
+	public void setEnable(boolean enable) { this.enable = enable; }
 
-	public void setEnabled(boolean enabled) { this.enabled = enabled; }
-
-	public Optional<AreaConfig> getAreaConfig() { return Optional.ofNullable(areaConfig); }
-
-	public FiltersList getFilters() { return filters; }
-
-	public void filter(Packet packet, FilterHost host, Consumer<Packet> callback) {
-		if (!enabled) return;
-
-		List<Packet> packets = new ArrayList<>();
-		filters.filter(packet, host, packets::add);
-
-		packets.forEach(partiallyFiltered -> {
-			MutablePacket filtered = MutablePacket.mutableOf(packet);
-
-			if (host instanceof HostHasSize sizeHost && filtered.getPenPosition().unit() == MeasurementUnit.UNITLESS)
-				filtered.setPenPosition(areaConfig.map(partiallyFiltered.getPenPosition(), sizeHost.getHostSize()));
-
-			callback.accept(filtered);
-		});
-	}
-
-	public static TabletConfig createDefault(Tablet tablet) {
-		TabletInfo info = tablet.getInfo();
-		AreaConfig areaConfig = info.getInputSize()
-			.map(size -> new AreaConfig(new Rectangle(0, 0, size.x(), size.y(), MeasurementUnit.UNITLESS), true))
-			.orElse(null);
-		return new TabletConfig(tablet.getTabletId(), info, true, areaConfig, new FiltersList());
-	}
+	public TabletFiltersList getFilters() { return filters; }
 }

@@ -9,6 +9,8 @@
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 	<artifactId>inking-maven-plugin</artifactId>
+	<name>Inking Maven Plugin</name>
+	<description>Maven plugin for doing cursed Java trick</description>
 	<packaging>maven-plugin</packaging>
 	<dependencies>
 		<dependency>

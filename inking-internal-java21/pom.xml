@@ -9,6 +9,12 @@
 	</parent>
 	<artifactId>inking-internal-java21</artifactId>
 	<name>Inking Internal (Java 21)</name>
+	<dependencies>
+		<dependency>
+			<groupId>io.github.nahkd123</groupId>
+			<artifactId>inking-api</artifactId>
+		</dependency>
+	</dependencies>
 	<build>
 		<plugins>
 			<plugin>
