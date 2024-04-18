@@ -11,16 +11,14 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: 8
-          dotnet-quality: ga
-      - uses: egor-tensin/setup-cygwin@v4
-        with:
-          packages: make perl-Digest-SHA
-      - name: Build NativeAOT with GNU Make (Windows x64, Windows arm64)
-        shell: bash
-        run: make -j win-x64 win-arm64
+      # Windows comes with .NET 8 by default
+      # - uses: actions/setup-dotnet@v4
+      #   with:
+      #     dotnet-version: 8
+      #     dotnet-quality: ga
+      - name: Build NativeAOT with PowerShell Core/pwsh (Windows x64, Windows arm64)
+        shell: pwsh
+        run: .\windows-build.ps1
         working-directory: inking-otd
       - uses: actions/upload-artifact@v4
         with:
