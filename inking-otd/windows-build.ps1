@@ -54,8 +54,12 @@ if ($args.Count -Gt 1) {
 	if ($PSEdition -Eq "Core") { $pwshExe = "$PSHOME\pwsh.exe" }
 	else { $pwshExe = "$PSHOME\powershell.exe" }
 	Write-Output "Building in parallel..."
+	$processes = @()
 
 	foreach ($target in $args) {
-		Start-Process -NoNewWindow $pwshExe -ArgumentList "$($MyInvocation.InvocationName) $target" | Wait-Process 
+		$processes += Start-Process -NoNewWindow $pwshExe -ArgumentList "$($MyInvocation.InvocationName) $target" -PassThru 
 	}
+
+	$processes | Wait-Process
+	Write-Output "Done building in parallel!"
 }
