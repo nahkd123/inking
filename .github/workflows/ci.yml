@@ -18,7 +18,7 @@ jobs:
       #     dotnet-quality: ga
       - name: Build NativeAOT with PowerShell Core/pwsh (Windows x64, Windows arm64)
         shell: pwsh
-        run: .\windows-build.ps1
+        run: .\windows-build.ps1 win-x64 win-arm64
         working-directory: inking-otd
       - uses: actions/upload-artifact@v4
         with:
