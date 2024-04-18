@@ -29,10 +29,11 @@ function buildTarget($target) {
 		}
 
 		if (Test-Path $outputFile -PathType Leaf) { Remove-Item -Path $outputFile }
+		New-Item -Path "$outputFile\.." -ItemType Directory -Force
 		Copy-Item -Path $sourceFile -Destination $outputFile
 
 		if (Test-Path $outputHash -PathType Leaf) { Remove-Item -Path $outputHash }
-		New-Item -Path $outputHash -Value (Get-FileHash $outputFile -Algorithm SHA1).Hash
+		New-Item -Path $outputHash -Value (Get-FileHash $outputFile -Algorithm SHA1).Hash -Force
 	} else {
 		Write-Warning "Ignoring $outputFile because it is already exists"
 	}
@@ -55,6 +56,6 @@ if ($args.Count -Gt 1) {
 	Write-Output "Building in parallel..."
 
 	foreach ($target in $args) {
-		& $pwshExe $MyInvocation.InvocationName $target
+		Start-Process -NoNewWindow $pwshExe -ArgumentList "$($MyInvocation.InvocationName) $target"
 	}
 }
