@@ -2,17 +2,7 @@
 _Reading pen tablet inputs from Java. Actually no, it should be "Java bridge to pen tablet drivers"._
 
 ## Build Inking
-### Prerequisites
-- .NET 8 SDK (Software Development Kit). .NET runtime is **not needed** (but it will be included with your .NET SDK).
-- Maven 3+
-- JDK (Java Development Kit) 21.
-- Git.
-- GNU `make`.
-
-### Instructions
-- Clone this repository with Git: `git clone https://github.com/nahkd123/inking.git`
-- Build natives for current platform: `cd inking-otd && make current-platform`
-- Build Java with Maven: `mvn install`. This will also install Inking components to your local Maven repository.
+Instructions on building Inking, including building the natives, can be found in [BUILDING.md](./BUILDING.md).
 
 ## Components
 ### Inking API
