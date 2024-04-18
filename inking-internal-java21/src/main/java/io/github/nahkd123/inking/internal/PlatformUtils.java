@@ -22,8 +22,8 @@ public class PlatformUtils {
 		byte[] bs = new byte[chars.length / 2];
 
 		for (int i = 0; i < bs.length; i++) {
-			int msb = HEX.indexOf(chars[i * 2]);
-			int lsb = HEX.indexOf(chars[i * 2 + 1]);
+			int msb = HEX.indexOf(Character.toLowerCase(chars[i * 2]));
+			int lsb = HEX.indexOf(Character.toLowerCase(chars[i * 2 + 1]));
 			bs[i] = (byte) ((msb << 4) | lsb);
 		}
 
