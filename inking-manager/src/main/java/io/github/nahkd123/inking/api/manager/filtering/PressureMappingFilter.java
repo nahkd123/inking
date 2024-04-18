@@ -3,6 +3,7 @@ package io.github.nahkd123.inking.api.manager.filtering;
 import java.util.function.Consumer;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import io.github.nahkd123.inking.api.manager.filtering.host.FilterHost;
@@ -53,13 +54,13 @@ public class PressureMappingFilter extends AbstractTabletFilter {
 		push(mutable);
 	}
 
-	public static final Codec<PressureMappingFilter> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+	public static final MapCodec<PressureMappingFilter> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 		Codec.BOOL.fieldOf("enable").forGetter(PressureMappingFilter::isEnabled),
 		MappingGraph.CODEC.fieldOf("graph").forGetter(PressureMappingFilter::getGraph))
 		.apply(instance, PressureMappingFilter::new));
 
 	@Override
-	public Codec<? extends TabletFilter> getCodec() { return CODEC; }
+	public MapCodec<? extends TabletFilter> getCodec() { return CODEC; }
 
 	public static void register() {
 		TabletFilter.register(

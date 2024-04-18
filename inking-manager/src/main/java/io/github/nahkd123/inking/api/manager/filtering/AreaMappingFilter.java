@@ -6,6 +6,7 @@ import java.util.function.Consumer;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import io.github.nahkd123.inking.api.manager.filtering.host.FilterHost;
@@ -112,14 +113,14 @@ public class AreaMappingFilter extends AbstractTabletFilter {
 			: DataResult.success(new InputRectangle(list.get(0), list.get(1), list.get(2), list.get(3))),
 		rect -> List.of(rect.x, rect.y, rect.width, rect.height));
 
-	public static final Codec<AreaMappingFilter> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+	public static final MapCodec<AreaMappingFilter> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 		Codec.BOOL.fieldOf("enable").forGetter(AreaMappingFilter::isEnabled),
 		Codec.BOOL.fieldOf("letterboxing").forGetter(AreaMappingFilter::isLetterboxing),
 		INPUT_RECT_CODEC.fieldOf("inputRectangle").forGetter(AreaMappingFilter::getInputRectangle))
 		.apply(instance, AreaMappingFilter::new));
 
 	@Override
-	public Codec<? extends TabletFilter> getCodec() { return CODEC; }
+	public MapCodec<? extends TabletFilter> getCodec() { return CODEC; }
 
 	public static void register() {
 		TabletFilter.register(

@@ -8,6 +8,7 @@ import java.util.function.Supplier;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 
 import io.github.nahkd123.inking.api.manager.filtering.host.FilterHost;
 import io.github.nahkd123.inking.api.tablet.ImmutablePacket;
@@ -81,9 +82,9 @@ public interface TabletFilter {
 	 * The codec must be the same as codec that was registered to filters registry.
 	 * </p>
 	 * 
-	 * @return The codec.
+	 * @return The map codec.
 	 */
-	public Codec<? extends TabletFilter> getCodec();
+	public MapCodec<? extends TabletFilter> getCodec();
 
 	/**
 	 * <p>
@@ -110,7 +111,7 @@ public interface TabletFilter {
 	public static record FilterInfo(String id, Supplier<? extends TabletFilter> supplier, String name, String description, String author) {
 	}
 
-	public static final BiMap<String, Codec<? extends TabletFilter>> CODECS_MAP = HashBiMap.create();
+	public static final BiMap<String, MapCodec<? extends TabletFilter>> CODECS_MAP = HashBiMap.create();
 	public static final Map<String, FilterInfo> INFO_MAP = new HashMap<>();
 
 	/**
@@ -132,7 +133,7 @@ public interface TabletFilter {
 	 *                    author, or you are too shy to show up.
 	 * @return {@code true} if the filter is registered successfully.
 	 */
-	public static <T extends TabletFilter> boolean register(String id, Codec<T> codec, Supplier<T> supplier, String name, String description, String author) {
+	public static <T extends TabletFilter> boolean register(String id, MapCodec<T> codec, Supplier<T> supplier, String name, String description, String author) {
 		if (CODECS_MAP.containsKey(id)) return false;
 
 		CODECS_MAP.put(id, codec);
@@ -154,7 +155,7 @@ public interface TabletFilter {
 	 *                 this filter does not have a display name.
 	 * @return {@code true} if the filter is registered successfully.
 	 */
-	public static <T extends TabletFilter> boolean register(String id, Codec<T> codec, Supplier<T> supplier, String name) {
+	public static <T extends TabletFilter> boolean register(String id, MapCodec<T> codec, Supplier<T> supplier, String name) {
 		return register(id, codec, supplier, name, null, null);
 	}
 
@@ -170,7 +171,7 @@ public interface TabletFilter {
 	 *                 configurations.
 	 * @return {@code true} if the filter is registered successfully.
 	 */
-	public static <T extends TabletFilter> boolean register(String id, Codec<T> codec, Supplier<T> supplier) {
+	public static <T extends TabletFilter> boolean register(String id, MapCodec<T> codec, Supplier<T> supplier) {
 		return register(id, codec, supplier, null, null, null);
 	}
 
