@@ -56,6 +56,6 @@ if ($args.Count -Gt 1) {
 	Write-Output "Building in parallel..."
 
 	foreach ($target in $args) {
-		Start-Process -NoNewWindow $pwshExe -ArgumentList "$($MyInvocation.InvocationName) $target"
+		Start-Process -NoNewWindow $pwshExe -ArgumentList "$($MyInvocation.InvocationName) $target" | Wait-Process 
 	}
 }
