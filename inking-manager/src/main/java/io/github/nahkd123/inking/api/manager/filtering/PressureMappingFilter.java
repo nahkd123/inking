@@ -31,6 +31,8 @@ public class PressureMappingFilter extends AbstractTabletFilter {
 
 	public MappingGraph getGraph() { return graph; }
 
+	public void setGraph(MappingGraph graph) { this.graph = graph; }
+
 	@Override
 	public void onInitialize(FilterHost host, Consumer<Packet> receiver) {
 		super.onInitialize(host, receiver);
