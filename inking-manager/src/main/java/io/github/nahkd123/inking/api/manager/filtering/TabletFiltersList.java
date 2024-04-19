@@ -112,7 +112,7 @@ public class TabletFiltersList extends AbstractList<TabletFilter> {
 
 		for (int i = 0; i < size(); i++) {
 			TabletFilter filter = filters.get(i);
-			Consumer<Packet> targetReceiver = i < size() - 1 ? filters.get(i)::onPacket : proxiedReceiver;
+			Consumer<Packet> targetReceiver = i < size() - 1 ? filters.get(i + 1)::onPacket : proxiedReceiver;
 			filter.onInitialize(host, targetReceiver);
 		}
 	}
