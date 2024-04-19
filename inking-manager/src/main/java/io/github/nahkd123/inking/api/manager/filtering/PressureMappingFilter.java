@@ -1,15 +1,13 @@
 package io.github.nahkd123.inking.api.manager.filtering;
 
-import java.util.function.Consumer;
-
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import io.github.nahkd123.inking.api.manager.filtering.host.FilterHost;
 import io.github.nahkd123.inking.api.manager.utils.MappingGraph;
 import io.github.nahkd123.inking.api.tablet.MutablePacket;
 import io.github.nahkd123.inking.api.tablet.Packet;
+import io.github.nahkd123.inking.api.tablet.TabletInfo;
 
 public class PressureMappingFilter extends AbstractTabletFilter {
 	private boolean enable;
@@ -20,9 +18,11 @@ public class PressureMappingFilter extends AbstractTabletFilter {
 		this.graph = graph;
 	}
 
-	public PressureMappingFilter() {
+	public PressureMappingFilter(TabletInfo info) {
 		this.enable = true;
-		this.graph = null; // will be initialized at onInitialize()
+		this.graph = new MappingGraph();
+		this.graph.add(0, 0);
+		this.graph.add(info.getMaxPressure(), info.getMaxPressure());
 	}
 
 	public boolean isEnabled() { return enable; }
@@ -32,17 +32,6 @@ public class PressureMappingFilter extends AbstractTabletFilter {
 	public MappingGraph getGraph() { return graph; }
 
 	public void setGraph(MappingGraph graph) { this.graph = graph; }
-
-	@Override
-	public void onInitialize(FilterHost host, Consumer<Packet> receiver) {
-		super.onInitialize(host, receiver);
-
-		if (graph == null) {
-			graph = new MappingGraph();
-			graph.add(0, 0);
-			graph.add(host.getTablet().getInfo().getMaxPressure(), host.getTablet().getInfo().getMaxPressure());
-		}
-	}
 
 	@Override
 	public void onPacket(Packet incoming) {

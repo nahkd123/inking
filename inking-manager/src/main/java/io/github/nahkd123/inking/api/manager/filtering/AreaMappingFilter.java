@@ -1,19 +1,16 @@
 package io.github.nahkd123.inking.api.manager.filtering;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.function.Consumer;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import io.github.nahkd123.inking.api.manager.filtering.host.FilterHost;
 import io.github.nahkd123.inking.api.manager.filtering.host.HostHasSize;
 import io.github.nahkd123.inking.api.tablet.MutablePacket;
 import io.github.nahkd123.inking.api.tablet.Packet;
-import io.github.nahkd123.inking.api.tablet.Tablet;
+import io.github.nahkd123.inking.api.tablet.TabletInfo;
 import io.github.nahkd123.inking.api.util.MeasurementUnit;
 import io.github.nahkd123.inking.api.util.Vector2;
 
@@ -31,30 +28,12 @@ public class AreaMappingFilter extends AbstractTabletFilter {
 		this.inputRectangle = inputRectangle;
 	}
 
-	public AreaMappingFilter(Tablet tablet) {
+	public AreaMappingFilter(TabletInfo info) {
 		this.enable = true;
 		this.letterboxing = true;
-		this.inputRectangle = tablet.getInfo().getInputSize()
+		this.inputRectangle = info.getInputSize()
 			.map(size -> new InputRectangle(0, 0, size.x(), size.y()))
 			.orElseGet(() -> new InputRectangle(0, 0, 640, 360));
-	}
-
-	public AreaMappingFilter() {
-		this.enable = true;
-		this.letterboxing = true;
-		this.inputRectangle = null;
-	}
-
-	@Override
-	public void onInitialize(FilterHost host, Consumer<Packet> receiver) {
-		super.onInitialize(host, receiver);
-
-		if (inputRectangle == null) {
-			Optional<Vector2> inputSize = host.getTablet().getInfo().getInputSize();
-			inputRectangle = inputSize.isPresent()
-				? new InputRectangle(0, 0, inputSize.get().x(), inputSize.get().y())
-				: new InputRectangle(0, 0, 640, 360); // The UI will not display area mapper anyways
-		}
 	}
 
 	public boolean isEnabled() { return enable; }

@@ -20,7 +20,7 @@ public class TabletConfig {
 
 	public TabletConfig(Tablet tablet) {
 		this(tablet.getTabletId(), true, new TabletFiltersList());
-		filters.add(new AreaMappingFilter(tablet));
+		filters.add(new AreaMappingFilter(tablet.getInfo()));
 	}
 
 	public static final Codec<TabletConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(

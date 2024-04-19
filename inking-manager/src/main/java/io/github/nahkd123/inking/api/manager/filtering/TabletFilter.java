@@ -3,6 +3,7 @@ package io.github.nahkd123.inking.api.manager.filtering;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import com.google.common.collect.BiMap;
@@ -14,6 +15,7 @@ import io.github.nahkd123.inking.api.manager.filtering.host.FilterHost;
 import io.github.nahkd123.inking.api.tablet.ImmutablePacket;
 import io.github.nahkd123.inking.api.tablet.MutablePacket;
 import io.github.nahkd123.inking.api.tablet.Packet;
+import io.github.nahkd123.inking.api.tablet.TabletInfo;
 
 /**
  * <p>
@@ -108,7 +110,7 @@ public interface TabletFilter {
 	 */
 	default FilterInfo getInfo() { return INFO_MAP.get(getId()); }
 
-	public static record FilterInfo(String id, Supplier<? extends TabletFilter> supplier, String name, String description, String author) {
+	public static record FilterInfo(String id, Function<TabletInfo, ? extends TabletFilter> factory, String name, String description, String author) {
 	}
 
 	public static final BiMap<String, MapCodec<? extends TabletFilter>> CODECS_MAP = HashBiMap.create();
@@ -123,8 +125,8 @@ public interface TabletFilter {
 	 *                    {@code inking:pressure_mapping} for example.
 	 * @param codec       The codec, used for deserializing the filter
 	 *                    configurations.
-	 * @param supplier    The supplier, which returns a new filter with initial
-	 *                    configurations.
+	 * @param factory     The filter factory, which produces default filter
+	 *                    configuration for given tablet info/specification.
 	 * @param name        The display name of this filter. Use {@code null} to
 	 *                    indicate this filter does not have a display name.
 	 * @param description The display description of this filter. Use {@code null}
@@ -133,11 +135,11 @@ public interface TabletFilter {
 	 *                    author, or you are too shy to show up.
 	 * @return {@code true} if the filter is registered successfully.
 	 */
-	public static <T extends TabletFilter> boolean register(String id, MapCodec<T> codec, Supplier<T> supplier, String name, String description, String author) {
+	public static <T extends TabletFilter> boolean register(String id, MapCodec<T> codec, Function<TabletInfo, T> factory, String name, String description, String author) {
 		if (CODECS_MAP.containsKey(id)) return false;
 
 		CODECS_MAP.put(id, codec);
-		INFO_MAP.put(id, new FilterInfo(id, supplier, name, description, author));
+		INFO_MAP.put(id, new FilterInfo(id, factory, name, description, author));
 		return true;
 	}
 
@@ -146,17 +148,17 @@ public interface TabletFilter {
 	 * See {@link #register(String, Codec, Supplier, String, String, String)}
 	 * </p>
 	 * 
-	 * @param id       The ID of the filter. It should be namespaced, like
-	 *                 {@code inking:pressure_mapping} for example.
-	 * @param codec    The codec, used for deserializing the filter configurations.
-	 * @param supplier The supplier, which returns a new filter with initial
-	 *                 configurations.
-	 * @param name     The display name of this filter. Use {@code null} to indicate
-	 *                 this filter does not have a display name.
+	 * @param id      The ID of the filter. It should be namespaced, like
+	 *                {@code inking:pressure_mapping} for example.
+	 * @param codec   The codec, used for deserializing the filter configurations.
+	 * @param factory The filter factory, which produces default filter
+	 *                configuration for given tablet info/specification.
+	 * @param name    The display name of this filter. Use {@code null} to indicate
+	 *                this filter does not have a display name.
 	 * @return {@code true} if the filter is registered successfully.
 	 */
-	public static <T extends TabletFilter> boolean register(String id, MapCodec<T> codec, Supplier<T> supplier, String name) {
-		return register(id, codec, supplier, name, null, null);
+	public static <T extends TabletFilter> boolean register(String id, MapCodec<T> codec, Function<TabletInfo, T> factory, String name) {
+		return register(id, codec, factory, name, null, null);
 	}
 
 	/**
@@ -164,15 +166,15 @@ public interface TabletFilter {
 	 * See {@link #register(String, Codec, Supplier, String, String, String)}
 	 * </p>
 	 * 
-	 * @param id       The ID of the filter. It should be namespaced, like
-	 *                 {@code inking:pressure_mapping} for example.
-	 * @param codec    The codec, used for deserializing the filter configurations.
-	 * @param supplier The supplier, which returns a new filter with initial
-	 *                 configurations.
+	 * @param id      The ID of the filter. It should be namespaced, like
+	 *                {@code inking:pressure_mapping} for example.
+	 * @param codec   The codec, used for deserializing the filter configurations.
+	 * @param factory The filter factory, which produces default filter
+	 *                configuration for given tablet info/specification.
 	 * @return {@code true} if the filter is registered successfully.
 	 */
-	public static <T extends TabletFilter> boolean register(String id, MapCodec<T> codec, Supplier<T> supplier) {
-		return register(id, codec, supplier, null, null, null);
+	public static <T extends TabletFilter> boolean register(String id, MapCodec<T> codec, Function<TabletInfo, T> factory) {
+		return register(id, codec, factory, null, null, null);
 	}
 
 	/**
