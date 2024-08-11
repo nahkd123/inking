@@ -7,24 +7,16 @@
 		<artifactId>inking</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
-	<artifactId>inking-otd</artifactId>
-	<name>Inking (OpenTabletDriver bridge)</name>
-    <properties>
+	<artifactId>inking-internal-java22</artifactId>
+	<name>Inking Internal (Java 22)</name>
+	<properties>
         <maven.compiler.source>22</maven.compiler.source>
         <maven.compiler.target>22</maven.compiler.target>
-    </properties>
+	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>io.github.nahkd123</groupId>
 			<artifactId>inking-api</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>io.github.nahkd123</groupId>
-			<artifactId>inking-internal-java22</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
 		</dependency>
 	</dependencies>
 </project>
