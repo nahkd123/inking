@@ -28,7 +28,7 @@
 	<modules>
 		<module>inking-api</module>
 		<module>inking-manager</module>
-		<module>inking-internal-java21</module>
+		<module>inking-internal-java22</module>
 		<module>inking-otd</module>
 		<module>inking-sample-otd</module>
 		<module>inking-maven-plugin</module>
